@@ -1,7 +1,0 @@
-﻿<Solution>
-  <Project Path="MagicaClothV2.csproj" />
-  <Project Path="MagicaClothV2.Editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="MagicaCloth2Example.csproj" />
-</Solution>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Firsthabit Talkmotion WebGL Test App">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="flutter_test_app">
+  <link rel="manifest" href="manifest.json">
+  <title>Firsthabit Talkmotion Test</title>
+</head>
+<body>
+  <script>
+    // ============================================================
+    // Unity WebGL Bridge: Connects Unity ↔ Flutter via JS
+    // ============================================================
+
+    var unityInstance = null;
+
+    // Called from Flutter after iframe is registered
+    window.connectUnityIframe = function() {
+      var iframe = document.querySelector('#unity-iframe');
+      if (!iframe) return;
+      var checkInterval = setInterval(function() {
+        try {
+          if (iframe.contentWindow && iframe.contentWindow.unityInstance) {
+            unityInstance = iframe.contentWindow.unityInstance;
+            console.log('[FirsthabitBridge] Unity instance connected');
+            clearInterval(checkInterval);
+          }
+        } catch (e) {}
+      }, 500);
+    };
+
+    window.sendToUnity = function(gameObject, method, param) {
+      if (unityInstance) {
+        unityInstance.SendMessage(gameObject, method, param || '');
+        console.log('[FirsthabitBridge] SendMessage: ' + gameObject + '.' + method + '(' + (param || '') + ')');
+      } else {
+        console.warn('[FirsthabitBridge] Unity instance not ready yet');
+      }
+    };
+
+    window.FirsthabitBridge = {
+      onBridgeReady: function() { console.log('[FirsthabitBridge:JS] onBridgeReady (no Dart listener)'); },
+      onPrepared: function(id) { console.log('[FirsthabitBridge:JS] onPrepared: ' + id); },
+      onPrepareFailed: function(id, error) { console.log('[FirsthabitBridge:JS] onPrepareFailed: ' + id + ' - ' + error); },
+      onPlaybackStarted: function(id) { console.log('[FirsthabitBridge:JS] onPlaybackStarted: ' + id); },
+      onPlaybackCompleted: function(id) { console.log('[FirsthabitBridge:JS] onPlaybackCompleted: ' + id); },
+      onSentenceStarted: function(text) { console.log('[FirsthabitBridge:JS] onSentenceStarted: ' + text); },
+      onSentenceEnded: function(text) { console.log('[FirsthabitBridge:JS] onSentenceEnded: ' + text); },
+      onSubtitleStarted: function(text) { console.log('[FirsthabitBridge:JS] onSubtitleStarted: ' + text); },
+      onSubtitleEnded: function(text) { console.log('[FirsthabitBridge:JS] onSubtitleEnded: ' + text); },
+      onRequestSent: function(id) { console.log('[FirsthabitBridge:JS] onRequestSent: ' + id); },
+      onResponseReceived: function(id) { console.log('[FirsthabitBridge:JS] onResponseReceived: ' + id); },
+      onVolumeChanged: function(volume) { console.log('[FirsthabitBridge:JS] onVolumeChanged: ' + volume); },
+      onError: function(method, message) { console.log('[FirsthabitBridge:JS] onError: ' + method + ' - ' + message); }
+    };
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

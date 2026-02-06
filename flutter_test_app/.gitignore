@@ -1,0 +1,30 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.config.dart
+lib/generated_plugin_registrant.dart
+
+# Unity WebGL build output (copied into web/ for testing)
+web/unity_webgl/Build/
+web/unity_webgl/TemplateData/
+web/unity_webgl/index.html
+
+# Misc
+.DS_Store
+*.log

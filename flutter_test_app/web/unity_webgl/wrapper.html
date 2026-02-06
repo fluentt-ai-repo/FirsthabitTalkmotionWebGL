@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Wrapper</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"
+    style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background: #231F20">
+  </canvas>
+  <script src="Build/unity_webgl.loader.js"></script>
+  <script>
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+      arguments: [],
+      dataUrl: "Build/unity_webgl.data",
+      frameworkUrl: "Build/unity_webgl.framework.js",
+      codeUrl: "Build/unity_webgl.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "FluentT",
+      productName: "FirsthabitTalkmotionWebGL",
+      productVersion: "0.1.0",
+    }).then(function(instance) {
+      window.unityInstance = instance;
+      console.log('[Unity] unityInstance exposed on window');
+    }).catch(function(message) {
+      alert(message);
+    });
+  </script>
+</body>
+</html>
