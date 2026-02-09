@@ -11,7 +11,7 @@ void main() {
   ui_web.platformViewRegistry.registerViewFactory('unity-webgl-iframe', (int viewId) {
     final iframe = web.document.createElement('iframe') as web.HTMLIFrameElement;
     iframe.id = 'unity-iframe';
-    iframe.src = 'unity_webgl/wrapper.html';
+    iframe.src = 'unity_wrapper.html';
     iframe.allow = 'autoplay';
     iframe.style.width = '100%';
     iframe.style.height = '100%';
