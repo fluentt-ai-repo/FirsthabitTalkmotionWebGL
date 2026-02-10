@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{{ PRODUCT_NAME }}}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      /* Checkerboard pattern to verify transparency */
+      background-color: #cccccc;
+      background-image:
+        linear-gradient(45deg, #999 25%, transparent 25%),
+        linear-gradient(-45deg, #999 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #999 75%),
+        linear-gradient(-45deg, transparent 75%, #999 75%);
+      background-size: 40px 40px;
+      background-position: 0 0, 0 20px, 20px -20px, -20px 0;
+    }
+
+    /* Top banner to make transparency obvious */
+    #info-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #info-bar button {
+      background: #ff6600;
+      color: #fff;
+      border: none;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+    #info-bar button:hover { background: #ff8833; }
+
+    #unity-canvas {
+      background: transparent !important;
+    }
+
+    #loading {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: monospace;
+      font-size: 18px;
+      color: #333;
+      background: rgba(255,255,255,0.8);
+      padding: 20px 40px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="info-bar">
+    <span id="status-text">Transparent BG Test | Loading...</span>
+    <span>
+      <button onclick="toggleBg('checker')">Checker</button>
+      <button onclick="toggleBg('red')">Red</button>
+      <button onclick="toggleBg('gradient')">Gradient</button>
+      <button onclick="toggleBg('white')">White</button>
+    </span>
+  </div>
+
+  <div id="loading">Loading...</div>
+
+  <canvas id="unity-canvas" tabindex="-1" style="width:100vw; height:100vh;"></canvas>
+
+  <script src="Build/{{{ LOADER_FILENAME }}}"></script>
+  <script>
+    var checkerBg = 'linear-gradient(45deg, #999 25%, transparent 25%),' +
+      'linear-gradient(-45deg, #999 25%, transparent 25%),' +
+      'linear-gradient(45deg, transparent 75%, #999 75%),' +
+      'linear-gradient(-45deg, transparent 75%, #999 75%)';
+
+    function toggleBg(mode) {
+      var body = document.body;
+      body.style.backgroundImage = 'none';
+      switch(mode) {
+        case 'checker':
+          body.style.backgroundColor = '#cccccc';
+          body.style.backgroundImage = checkerBg;
+          body.style.backgroundSize = '40px 40px';
+          body.style.backgroundPosition = '0 0, 0 20px, 20px -20px, -20px 0';
+          break;
+        case 'red':
+          body.style.backgroundColor = '#ff0000';
+          break;
+        case 'gradient':
+          body.style.backgroundImage = 'linear-gradient(135deg, #ff0000, #00ff00, #0000ff)';
+          break;
+        case 'white':
+          body.style.backgroundColor = '#ffffff';
+          break;
+      }
+    }
+
+    createUnityInstance(document.querySelector("#unity-canvas"), {
+      dataUrl: "Build/{{{ DATA_FILENAME }}}",
+      frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+      codeUrl: "Build/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+      memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+      symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+#endif
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "{{{ COMPANY_NAME }}}",
+      productName: "{{{ PRODUCT_NAME }}}",
+      productVersion: "{{{ PRODUCT_VERSION }}}",
+      webglContextAttributes: {
+        "alpha": true,
+        "preserveDrawingBuffer": false,
+        "premultipliedAlpha": false
+      },
+    }).then(function(instance) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("status-text").textContent =
+        "Transparent BG Test | If you see the background pattern through the canvas = transparency works!";
+    }).catch(function(message) {
+      document.getElementById("loading").textContent = "Error: " + message;
+      console.error(message);
+    });
+  </script>
+</body>
+</html>
