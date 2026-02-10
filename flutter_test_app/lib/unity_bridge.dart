@@ -128,6 +128,15 @@ class UnityBridge {
     _sendToUnity('ChangeAvatar', key);
   }
 
+  /// Set camera background color.
+  /// [colorString] is "transparent" or hex like "#FF0000".
+  void setBackgroundColor(String colorString) {
+    _sendToUnity('SetBackgroundColor', colorString);
+    _jsSetTransparentDebug(
+      (colorString.toLowerCase() == 'transparent').toJS,
+    );
+  }
+
   // -------------------------------------------------------
   // Internal helpers
   // -------------------------------------------------------
@@ -169,6 +178,10 @@ class UnityBridge {
 /// Call window.sendToUnity(gameObject, method, param)
 @JS('sendToUnity')
 external void _jsSendToUnity(JSString gameObject, JSString method, JSString param);
+
+/// Toggle checkerboard debug background in Unity iframe
+@JS('setTransparentDebug')
+external void _jsSetTransparentDebug(JSBoolean on);
 
 /// Set window.FirsthabitBridge = bridge
 @JS('FirsthabitBridge')

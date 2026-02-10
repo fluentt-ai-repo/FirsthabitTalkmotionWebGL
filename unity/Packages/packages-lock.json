@@ -17,7 +17,7 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.timeline": "1.8.9"
       },
-      "hash": "e7a03766e1978aad10ac03c8c7cfa2ac50a4bda5"
+      "hash": "0196d76bba3f3aefa745650140c461eafe4d9540"
     },
     "com.unity.animation.rigging": {
       "version": "1.4.1",
@@ -55,18 +55,9 @@
     },
     "com.unity.ext.nunit": {
       "version": "2.0.5",
-      "depth": 1,
+      "depth": 2,
       "source": "builtin",
       "dependencies": {}
-    },
-    "com.unity.ide.rider": {
-      "version": "3.0.39",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
       "version": "2.0.27",

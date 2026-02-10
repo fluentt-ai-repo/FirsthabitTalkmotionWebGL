@@ -16,6 +16,8 @@ void main() {
     iframe.style.width = '100%';
     iframe.style.height = '100%';
     iframe.style.border = 'none';
+    iframe.style.background = 'transparent';
+    iframe.setAttribute('allowtransparency', 'true');
     return iframe;
   });
 
@@ -59,6 +61,13 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
   bool _bridgeReady = false;
   bool _unityConnected = false;
 
+  // Batch test state
+  final _batchFiles = <({String base64, String format, String fileName})>[];
+  final _batchCacheIds = <String>[];
+  bool _batchRunning = false;
+  bool _batchPlaying = false;
+  int _batchPlayIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -88,10 +97,12 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
     _bridge.onPrepared.listen((id) {
       _cacheIdController.text = id;
       _addLog('Prepared: $id');
+      _onBatchPrepared(id);
     });
 
     _bridge.onPrepareFailed.listen((e) {
       _addLog('PrepareFailed: ${e.id} - ${e.error}');
+      _cancelBatch('prepare failed');
     });
 
     _bridge.onPlaybackStarted.listen((id) {
@@ -100,6 +111,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
 
     _bridge.onPlaybackCompleted.listen((id) {
       _addLog('PlaybackCompleted: $id');
+      _onBatchPlaybackCompleted();
     });
 
     _bridge.onSentenceStarted.listen((text) {
@@ -132,6 +144,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
 
     _bridge.onError.listen((e) {
       _addLog('ERROR [${e.method}]: ${e.message}');
+      _cancelBatch('error occurred');
     });
   }
 
@@ -150,6 +163,10 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
       }
     });
   }
+
+  // -------------------------------------------------------
+  // Single file controls
+  // -------------------------------------------------------
 
   void _pickAudioFile() {
     final input = web.document.createElement('input') as web.HTMLInputElement;
@@ -199,6 +216,172 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
     };
   }
 
+  // -------------------------------------------------------
+  // Batch: pick multiple files, prepare all, then play all
+  // -------------------------------------------------------
+
+  void _pickBatchFiles() {
+    final input = web.document.createElement('input') as web.HTMLInputElement;
+    input.type = 'file';
+    input.accept = '.wav,.mp3,.m4a,.ogg,audio/*';
+    input.multiple = true;
+    input.style.display = 'none';
+    web.document.body!.append(input);
+
+    input.onchange = ((web.Event event) {
+      final files = input.files;
+      if (files != null && files.length > 0) {
+        final count = files.length > 5 ? 5 : files.length;
+        final tempList = List<({String base64, String format, String fileName})?>.filled(count, null);
+        var loaded = 0;
+
+        for (var i = 0; i < count; i++) {
+          final file = files.item(i)!;
+          final fileName = file.name;
+          final format = _getFormatFromName(fileName);
+          final reader = web.FileReader();
+          final index = i;
+
+          reader.onload = ((web.Event e) {
+            final dataUrl = (reader.result as JSString).toDart;
+            final base64 = dataUrl.split(',').last;
+            tempList[index] = (base64: base64, format: format, fileName: fileName);
+            loaded++;
+
+            if (loaded == count) {
+              setState(() {
+                _batchFiles.clear();
+                _batchCacheIds.clear();
+                _batchRunning = false;
+                _batchPlaying = false;
+                for (final item in tempList) {
+                  if (item != null) _batchFiles.add(item);
+                }
+              });
+              _addLog('>> Batch: ${_batchFiles.length} files loaded');
+              for (var j = 0; j < _batchFiles.length; j++) {
+                _addLog('>>   [${j + 1}] ${_batchFiles[j].fileName}');
+              }
+              input.remove();
+            }
+          }).toJS;
+          reader.readAsDataURL(file);
+        }
+      } else {
+        input.remove();
+      }
+    }).toJS;
+
+    input.click();
+  }
+
+  void _startBatch() {
+    if (_batchFiles.isEmpty || _batchRunning) return;
+    setState(() {
+      _batchCacheIds.clear();
+      _batchRunning = true;
+      _batchPlaying = false;
+      _batchPlayIndex = 0;
+    });
+    _addLog('>> Batch: starting ${_batchFiles.length} files...');
+    _prepareBatchItem(0);
+  }
+
+  void _prepareBatchItem(int index) {
+    final item = _batchFiles[index];
+    _addLog('>> Batch prepare [${index + 1}/${_batchFiles.length}]: ${item.fileName}');
+    _bridge.prepareAudio(item.base64, item.format);
+  }
+
+  void _onBatchPrepared(String cacheId) {
+    if (!_batchRunning) return;
+
+    _batchCacheIds.add(cacheId);
+    _addLog('>> Batch prepared [${_batchCacheIds.length}/${_batchFiles.length}]');
+
+    // Start next prepare if remaining
+    if (_batchCacheIds.length < _batchFiles.length) {
+      _prepareBatchItem(_batchCacheIds.length);
+    }
+
+    // Start playback if not already playing and this is the one we need
+    if (!_batchPlaying && _batchCacheIds.length > _batchPlayIndex) {
+      _batchPlaying = true;
+      _playBatchItem(_batchPlayIndex);
+    }
+  }
+
+  void _playBatchItem(int index) {
+    final cacheId = _batchCacheIds[index];
+    final fileName = _batchFiles[index].fileName;
+    _addLog('>> Batch play [${index + 1}/${_batchCacheIds.length}]: $fileName');
+    _bridge.play(cacheId, playAudio: _playAudio);
+  }
+
+  void _onBatchPlaybackCompleted() {
+    if (!_batchRunning || !_batchPlaying) return;
+
+    _batchPlayIndex++;
+    if (_batchPlayIndex >= _batchFiles.length) {
+      // All done
+      _addLog('>> Batch: all playback completed!');
+      setState(() {
+        _batchRunning = false;
+        _batchPlaying = false;
+      });
+    } else if (_batchPlayIndex < _batchCacheIds.length) {
+      // Next file already prepared, play immediately
+      _playBatchItem(_batchPlayIndex);
+    } else {
+      // Next file not yet prepared, wait for _onBatchPrepared to trigger play
+      _batchPlaying = false;
+      _addLog('>> Batch: waiting for next prepare...');
+    }
+  }
+
+  void _cancelBatch(String reason) {
+    if (!_batchRunning) return;
+    _addLog('>> Batch: stopped ($reason)');
+    setState(() {
+      _batchRunning = false;
+      _batchPlaying = false;
+    });
+  }
+
+  void _stopBatch() {
+    if (!_batchRunning) return;
+    _bridge.stop();
+    _cancelBatch('user stopped');
+  }
+
+  // -------------------------------------------------------
+  // Background helpers
+  // -------------------------------------------------------
+
+  Widget _bgColorChip(String label, String hex, Color displayColor) {
+    return ActionChip(
+      avatar: CircleAvatar(
+        backgroundColor: displayColor,
+        radius: 8,
+        child: displayColor == Colors.white
+            ? Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey, width: 0.5),
+                ),
+              )
+            : null,
+      ),
+      label: Text(label),
+      onPressed: () {
+        _bridge.setBackgroundColor(hex);
+        _addLog('>> Background: $label ($hex)');
+      },
+    );
+  }
+
+  // -------------------------------------------------------
+
   @override
   void dispose() {
     _bridge.dispose();
@@ -212,10 +395,18 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
     return Scaffold(
       body: Row(
         children: [
-          // Left: Unity WebGL
-          const Expanded(
+          // Left: Unity WebGL (with checkerboard behind for transparency test)
+          Expanded(
             flex: 3,
-            child: HtmlElementView(viewType: 'unity-webgl-iframe'),
+            child: Stack(
+              children: [
+                // Checkerboard background to verify transparency
+                Positioned.fill(
+                  child: CustomPaint(painter: _CheckerboardPainter()),
+                ),
+                const HtmlElementView(viewType: 'unity-webgl-iframe'),
+              ],
+            ),
           ),
           // Right: Controls panel
           SizedBox(
@@ -257,7 +448,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Audio file picker
+                // --- Single file controls ---
                 OutlinedButton.icon(
                   onPressed: _pickAudioFile,
                   icon: const Icon(Icons.audio_file, size: 18),
@@ -275,15 +466,10 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                     ),
                   ),
                 const SizedBox(height: 8),
-
-                // Prepare
                 FilledButton.icon(
                   onPressed: _audioBase64 != null
                       ? () {
-                          _bridge.prepareAudio(
-                            _audioBase64!,
-                            _audioFormat,
-                          );
+                          _bridge.prepareAudio(_audioBase64!, _audioFormat);
                           _addLog('>> Prepare: $_audioFileName');
                         }
                       : null,
@@ -291,8 +477,6 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                   label: const Text('Prepare'),
                 ),
                 const SizedBox(height: 6),
-
-                // Cache ID input
                 TextField(
                   controller: _cacheIdController,
                   decoration: const InputDecoration(
@@ -300,14 +484,11 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                     hintText: 'Auto-filled on Prepare',
                     isDense: true,
                     border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   ),
                   style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
                 ),
                 const SizedBox(height: 6),
-
-                // Play + Stop
                 Row(
                   children: [
                     Expanded(
@@ -365,7 +546,85 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                     const Icon(Icons.volume_up, size: 18),
                   ],
                 ),
-                const SizedBox(height: 4),
+
+                // --- Background controls ---
+                const Divider(height: 16),
+                Text('Background', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    _bgColorChip('Dark', '#231F20', const Color(0xFF231F20)),
+                    _bgColorChip('White', '#FFFFFF', Colors.white),
+                    _bgColorChip('Green', '#00B050', const Color(0xFF00B050)),
+                    _bgColorChip('Blue', '#1A73E8', const Color(0xFF1A73E8)),
+                    _bgColorChip('Gray', '#808080', const Color(0xFF808080)),
+                    ActionChip(
+                      avatar: const Icon(Icons.opacity, size: 16),
+                      label: const Text('Transparent'),
+                      onPressed: () {
+                        _bridge.setBackgroundColor('transparent');
+                        _addLog('>> Background: transparent');
+                      },
+                    ),
+                  ],
+                ),
+
+                // --- Batch controls ---
+                const Divider(height: 16),
+                Text('Batch Test', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 6),
+                OutlinedButton.icon(
+                  onPressed: _batchRunning ? null : _pickBatchFiles,
+                  icon: const Icon(Icons.library_music, size: 18),
+                  label: Text(
+                    _batchFiles.isEmpty
+                        ? 'Pick Audio Files (max 5)'
+                        : '${_batchFiles.length} files selected',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (_batchFiles.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  ...List.generate(
+                    _batchFiles.length,
+                    (i) => Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(
+                        '[${i + 1}] ${_batchFiles[i].fileName}',
+                        style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _batchFiles.isNotEmpty && !_batchRunning
+                            ? _startBatch
+                            : null,
+                        icon: const Icon(Icons.playlist_play, size: 18),
+                        label: Text(_batchRunning
+                            ? 'Running... (${_batchCacheIds.length}/${_batchFiles.length})'
+                            : 'Prepare & Play All'),
+                      ),
+                    ),
+                    if (_batchRunning) ...[
+                      const SizedBox(width: 6),
+                      OutlinedButton.icon(
+                        onPressed: _stopBatch,
+                        icon: const Icon(Icons.stop, size: 18),
+                        label: const Text('Stop'),
+                      ),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 8),
 
                 // Log header
                 Row(
@@ -425,3 +684,25 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
 
 @JS('connectUnityIframe')
 external void _jsConnectUnityIframe();
+
+class _CheckerboardPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const cellSize = 20.0;
+    final light = Paint()..color = const Color(0xFFCCCCCC);
+    final dark = Paint()..color = const Color(0xFF999999);
+
+    for (var y = 0.0; y < size.height; y += cellSize) {
+      for (var x = 0.0; x < size.width; x += cellSize) {
+        final isEven = ((x ~/ cellSize) + (y ~/ cellSize)) % 2 == 0;
+        canvas.drawRect(
+          Rect.fromLTWH(x, y, cellSize, cellSize),
+          isEven ? light : dark,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

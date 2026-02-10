@@ -34,6 +34,8 @@ namespace Firsthabit.WebGL
             public bool playAudio = true;
         }
 
+        // BackgroundColorRequest removed - using hex string instead
+
         #endregion
 
         #region State
@@ -319,6 +321,44 @@ namespace Firsthabit.WebGL
         {
             Log($"ChangeAvatar: {key} (not yet implemented)");
             FH_OnError("ChangeAvatar", "Not yet implemented");
+        }
+
+        /// <summary>
+        /// Set camera background color.
+        /// Param: "transparent" or hex color string like "#FF0000", "#00B050"
+        /// </summary>
+        public void SetBackgroundColor(string colorString)
+        {
+            try
+            {
+                var cam = Camera.main;
+                if (cam == null)
+                {
+                    FH_OnError("SetBackgroundColor", "Main camera not found");
+                    return;
+                }
+
+                if (colorString.Equals("transparent", StringComparison.OrdinalIgnoreCase))
+                {
+                    cam.clearFlags = CameraClearFlags.SolidColor;
+                    cam.backgroundColor = new Color(0, 0, 0, 0);
+                    Log("Background set to transparent");
+                }
+                else if (ColorUtility.TryParseHtmlString(colorString, out Color color))
+                {
+                    cam.clearFlags = CameraClearFlags.SolidColor;
+                    cam.backgroundColor = color;
+                    Log($"Background color set to {colorString}");
+                }
+                else
+                {
+                    FH_OnError("SetBackgroundColor", $"Invalid color: {colorString}. Use 'transparent' or '#RRGGBB'");
+                }
+            }
+            catch (Exception e)
+            {
+                FH_OnError("SetBackgroundColor", e.Message);
+            }
         }
 
         #endregion

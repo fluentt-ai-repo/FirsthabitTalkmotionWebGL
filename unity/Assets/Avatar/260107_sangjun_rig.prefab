@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5084854746078186390
+--- !u!1 &4476126867589278387
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 96477722487210579}
-  - component: {fileID: 8577817434941496654}
+  - component: {fileID: 4143753984026633734}
+  - component: {fileID: 8321085585248168878}
   m_Layer: 0
   m_Name: TargetTracking
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &96477722487210579
+--- !u!4 &4143753984026633734
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5084854746078186390}
+  m_GameObject: {fileID: 4476126867589278387}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,13 +32,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 9135528915062716275}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8577817434941496654
+--- !u!114 &8321085585248168878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5084854746078186390}
+  m_GameObject: {fileID: 4476126867589278387}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
@@ -1029,7 +1029,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 006e2f0216bc5e342998f54b0cfd7d5b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 96477722487210579}
+      addedObject: {fileID: 4143753984026633734}
     - targetCorrespondingSourceObject: {fileID: 4436805663696350335, guid: 006e2f0216bc5e342998f54b0cfd7d5b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8204726827730760483}
@@ -1115,7 +1115,7 @@ Animator:
   m_GameObject: {fileID: 8470210462853574089}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
-  m_Controller: {fileID: 9100000, guid: 03f5e67c17542e14f8df738c0417e5f5, type: 2}
+  m_Controller: {fileID: 9100000, guid: b792cf61491357a4185f3060f1f54cf7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1585,7 +1585,7 @@ MonoBehaviour:
   faceBlendInTime: 0.1
   faceBlendOutTime: 0.1
   faceBlendMode: 2
-  useBaseFaceClip: 1
+  useBaseFaceClip: 0
   enableHeadAnimation: 1
   normalizeHeadMotion: 1
   headPositionScale: {x: 1, y: 1, z: 1}
@@ -1623,17 +1623,14 @@ MonoBehaviour:
   enableCallbackLogging: 0
   testTimelinePosition: 0
   chatText: "\uC548\uB155\uD558\uC138\uC694! \uC624\uB298 \uB0A0\uC528\uAC00 \uC5B4\uB5A4\uAC00\uC694?"
-  useContinuousChat: 0
   speechText: "\uC774\uAC83\uC740 \uC74C\uC131 \uD569\uC131 \uD14C\uC2A4\uD2B8\uC785\uB2C8\uB2E4."
-  useContinuousSpeech: 0
   translateText: Hello, how are you today?
   targetLanguage: ko
   sourceLanguage: auto
-  useContinuousTranslation: 0
   testAudioClip: {fileID: 0}
   speechMotionText: 
-  useFaceOnly: 1
   speechMotionPlayAudio: 1
+  useContinuousMode: 0
   prepareOnlyMode: 0
   prepareTestCacheId: test-prepare-001
   recordingSampleRate: 16000
@@ -1657,7 +1654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RigLayers:
-  - m_Rig: {fileID: 8577817434941496654}
+  - m_Rig: {fileID: 8321085585248168878}
     m_Active: 1
   m_Effectors: []
 --- !u!114 &-7204718938699844663
@@ -1813,9 +1810,85 @@ MonoBehaviour:
     durationOverride: 0
   enableEyeBlink: 1
   blinkClip:
-    name: 
-    animationType: 0
-    curveDatas: []
+    name: DefaultEyeBlink
+    animationType: 1
+    curveDatas:
+    - relativePath: 
+      b:
+      - key: eyeBlinkLeft
+        f:
+        - t: 0
+          v: 0
+        - t: 0.06
+          v: 100
+        - t: 0.08
+          v: 100
+        - t: 0.18
+          v: 0
+        l: 0.18
+        blendWeight: 1
+      - key: eyeBlinkRight
+        f:
+        - t: 0
+          v: 0
+        - t: 0.06
+          v: 100
+        - t: 0.08
+          v: 100
+        - t: 0.18
+          v: 0
+        l: 0.18
+        blendWeight: 1
+      px:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      py:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      pz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rx:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      ry:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rw:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      erx:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      ery:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      erz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
     repeat: 0
   blinkInterval: 3
   blinkIntervalVariance: 1

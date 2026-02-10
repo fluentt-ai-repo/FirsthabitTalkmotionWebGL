@@ -5,15 +5,34 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Unity WebGL Wrapper</title>
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+      background: transparent;
+    }
+    #unity-canvas {
+      width: 100%; height: 100%; position: fixed; top: 0; left: 0;
+      background: transparent;
+    }
+    /* Checkerboard pattern for transparency debugging */
+    body.transparent-bg {
+      background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      background-color: #999;
+    }
   </style>
 </head>
 <body>
-  <canvas id="unity-canvas" tabindex="-1"
-    style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background: #231F20">
-  </canvas>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+
   <script src="unity_webgl/Build/unity_webgl.loader.js"></script>
   <script>
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     createUnityInstance(document.querySelector("#unity-canvas"), {
       arguments: [],
       dataUrl: "unity_webgl/Build/unity_webgl.data",
@@ -23,12 +42,22 @@
       companyName: "FluentT",
       productName: "FirsthabitTalkmotionWebGL",
       productVersion: "0.1.0",
+      webglContextAttributes: {
+        alpha: true,
+        preserveDrawingBuffer: false,
+        premultipliedAlpha: isIOS
+      },
     }).then(function(instance) {
       window.unityInstance = instance;
       console.log('[Unity] unityInstance exposed on window');
     }).catch(function(message) {
       alert(message);
     });
+
+    // Called from parent to toggle checkerboard visibility
+    window.setTransparentDebug = function(on) {
+      document.body.classList.toggle('transparent-bg', on);
+    };
   </script>
 </body>
 </html>

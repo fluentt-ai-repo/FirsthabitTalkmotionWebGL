@@ -132,17 +132,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 330585546}
     - target: {fileID: -7204718938699844663, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: enableLookTarget
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -7204718938699844663, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
       propertyPath: eyeVirtualTargetRef
       value: 
-      objectReference: {fileID: 1764778542}
-    - target: {fileID: 4649556151351018046, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_RigLayers.Array.data[0].m_Rig
-      value: 
-      objectReference: {fileID: 214709535}
+      objectReference: {fileID: 1242897597}
     - target: {fileID: 8470210462853574089, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
       propertyPath: m_Name
       value: 260107_sangjun_rig
@@ -188,25 +180,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 5084854746078186390, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 214709534}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
---- !u!114 &85788326 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -3718989010085238237, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-  m_PrefabInstance: {fileID: 85788325}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4f0565a90d64a448a59d4d1d8fe6af4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &146730333
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,52 +311,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!1 &214709533
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 214709534}
-  - component: {fileID: 214709535}
-  m_Layer: 0
-  m_Name: TargetTracking
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &214709534
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 214709533}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 903601630}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &214709535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 214709533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
-  m_Weight: 1
-  m_Effectors: []
 --- !u!1 &283673551
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,7 +453,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &299178007
 Transform:
@@ -551,7 +482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239c07a2691de1f4b829fd3dcef3ca7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Firsthabit.WebGL.FirsthabitWebGLBridge
-  fluentTAvatar: {fileID: 85788326}
+  fluentTAvatar: {fileID: 1964602101}
   enableLogging: 1
 --- !u!1 &330585543
 GameObject:
@@ -570,7 +501,7 @@ GameObject:
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!81 &330585544
 AudioListener:
@@ -817,43 +748,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!1 &683241940
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 683241941}
-  m_Layer: 0
-  m_Name: 260107_sangjun_rig_VirtualTargets
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &683241941
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 683241940}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1764778542}
-  m_Father: {fileID: 1588335105}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &903601630 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-  m_PrefabInstance: {fileID: 85788325}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1134071404
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +875,37 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &1242897596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1242897597}
+  m_Layer: 0
+  m_Name: EyeVirtualTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1242897597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242897596}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.000000013038516, y: 0.41172165, z: 2.1269608}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1828518598}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1393563254
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,7 +1022,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 683241941}
+  - {fileID: 1828518598}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1646221885
@@ -1227,7 +1152,7 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!1 &1764778541
+--- !u!1 &1828518597
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1235,28 +1160,29 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1764778542}
+  - component: {fileID: 1828518598}
   m_Layer: 0
-  m_Name: EyeVirtualTarget
+  m_Name: 260107_sangjun_rig_VirtualTargets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1764778542
+--- !u!4 &1828518598
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1764778541}
+  m_GameObject: {fileID: 1828518597}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000000013038516, y: 0.41172165, z: 2.1269608}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 683241941}
+  m_Children:
+  - {fileID: 1242897597}
+  m_Father: {fileID: 1588335105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1854367502
 GameObject:
@@ -1385,6 +1311,17 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &1964602101 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -3718989010085238237, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
+  m_PrefabInstance: {fileID: 85788325}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4f0565a90d64a448a59d4d1d8fe6af4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
