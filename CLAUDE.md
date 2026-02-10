@@ -125,6 +125,11 @@ git push origin --delete feat/기능명     # 원격 삭제
 - Unity WebGL은 iframe으로 Flutter에 임베딩
 - **중요**: jslib에서 `window.parent` 사용 (Unity는 iframe 안에서 실행)
 
+## 배포
+- Firebase Hosting 사용 → 상세 가이드: [FIREBASE_DEPLOY.md](./FIREBASE_DEPLOY.md)
+- **배포 URL**: https://firsthabittalkmotionwebgl.web.app
+- 빠른 배포: `cd flutter_test_app && flutter build web --release && firebase deploy --only hosting`
+
 ---
 
 ## 남은 과제 목록
