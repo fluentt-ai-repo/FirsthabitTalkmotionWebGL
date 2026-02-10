@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:js_interop';
 
 import 'package:web/web.dart' as web;
@@ -25,6 +26,7 @@ class UnityBridge {
   final _onResponseReceived = StreamController<String>.broadcast();
   final _onVolumeChanged = StreamController<double>.broadcast();
   final _onError = StreamController<({String method, String message})>.broadcast();
+  final _onCacheInfo = StreamController<({int count, List<String> ids})>.broadcast();
 
   // Public streams
   Stream<void> get onBridgeReady => _onBridgeReady.stream;
@@ -40,6 +42,7 @@ class UnityBridge {
   Stream<String> get onResponseReceived => _onResponseReceived.stream;
   Stream<double> get onVolumeChanged => _onVolumeChanged.stream;
   Stream<({String method, String message})> get onError => _onError.stream;
+  Stream<({int count, List<String> ids})> get onCacheInfo => _onCacheInfo.stream;
 
   UnityBridge() {
     _registerCallbacks();
@@ -87,6 +90,12 @@ class UnityBridge {
       onError: ((JSString method, JSString message) {
         _onError.add((method: method.toDart, message: message.toDart));
       }).toJS,
+      onCacheInfo: ((JSString json) {
+        final map = jsonDecode(json.toDart) as Map<String, dynamic>;
+        final count = map['count'] as int;
+        final ids = (map['ids'] as List<dynamic>).cast<String>();
+        _onCacheInfo.add((count: count, ids: ids));
+      }).toJS,
     );
 
     // Set window.FirsthabitBridge = bridge
@@ -124,6 +133,10 @@ class UnityBridge {
     _sendToUnity('ClearAllCache', '');
   }
 
+  void getCacheInfo() {
+    _sendToUnity('GetCacheInfo', '');
+  }
+
   void changeAvatar(String key) {
     _sendToUnity('ChangeAvatar', key);
   }
@@ -132,9 +145,6 @@ class UnityBridge {
   /// [colorString] is "transparent" or hex like "#FF0000".
   void setBackgroundColor(String colorString) {
     _sendToUnity('SetBackgroundColor', colorString);
-    _jsSetTransparentDebug(
-      (colorString.toLowerCase() == 'transparent').toJS,
-    );
   }
 
   // -------------------------------------------------------
@@ -168,6 +178,7 @@ class UnityBridge {
     _onResponseReceived.close();
     _onVolumeChanged.close();
     _onError.close();
+    _onCacheInfo.close();
   }
 }
 
@@ -211,5 +222,6 @@ extension type _FirsthabitBridgeJS._(JSObject _) implements JSObject {
     JSFunction onResponseReceived,
     JSFunction onVolumeChanged,
     JSFunction onError,
+    JSFunction onCacheInfo,
   });
 }

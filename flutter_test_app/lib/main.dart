@@ -146,6 +146,10 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
       _addLog('ERROR [${e.method}]: ${e.message}');
       _cancelBatch('error occurred');
     });
+
+    _bridge.onCacheInfo.listen((info) {
+      _addLog('CacheInfo: count=${info.count}, ids=${info.ids}');
+    });
   }
 
   void _addLog(String message) {
@@ -398,14 +402,18 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
           // Left: Unity WebGL (with checkerboard behind for transparency test)
           Expanded(
             flex: 3,
-            child: Stack(
-              children: [
-                // Checkerboard background to verify transparency
-                Positioned.fill(
-                  child: CustomPaint(painter: _CheckerboardPainter()),
-                ),
-                const HtmlElementView(viewType: 'unity-webgl-iframe'),
-              ],
+            child: ClipRect(
+              child: Stack(
+                children: [
+                  // Checkerboard background to verify transparency
+                  Positioned.fill(
+                    child: CustomPaint(painter: _CheckerboardPainter()),
+                  ),
+                  const Positioned.fill(
+                    child: HtmlElementView(viewType: 'unity-webgl-iframe'),
+                  ),
+                ],
+              ),
             ),
           ),
           // Right: Controls panel
@@ -474,14 +482,14 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                         }
                       : null,
                   icon: const Icon(Icons.upload_file, size: 18),
-                  label: const Text('Prepare'),
+                  label: const Text('Generate'),
                 ),
                 const SizedBox(height: 6),
                 TextField(
                   controller: _cacheIdController,
                   decoration: const InputDecoration(
                     labelText: 'Cache ID',
-                    hintText: 'Auto-filled on Prepare',
+                    hintText: 'Auto-filled on Generate',
                     isDense: true,
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -496,7 +504,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                         onPressed: () {
                           final cacheId = _cacheIdController.text.trim();
                           if (cacheId.isEmpty) {
-                            _addLog('>> ERROR: No cache ID. Prepare first.');
+                            _addLog('>> ERROR: No cache ID. Generate first.');
                             return;
                           }
                           _bridge.play(cacheId, playAudio: _playAudio);
@@ -571,6 +579,36 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                   ],
                 ),
 
+                // --- Cache controls ---
+                const Divider(height: 16),
+                Text('Cache', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          _bridge.getCacheInfo();
+                          _addLog('>> GetCacheInfo');
+                        },
+                        icon: const Icon(Icons.info_outline, size: 18),
+                        label: const Text('Cache Info'),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          _bridge.clearAllCache();
+                          _addLog('>> ClearAllCache');
+                        },
+                        icon: const Icon(Icons.delete_outline, size: 18),
+                        label: const Text('Clear All'),
+                      ),
+                    ),
+                  ],
+                ),
+
                 // --- Batch controls ---
                 const Divider(height: 16),
                 Text('Batch Test', style: Theme.of(context).textTheme.titleSmall),
@@ -610,7 +648,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                         icon: const Icon(Icons.playlist_play, size: 18),
                         label: Text(_batchRunning
                             ? 'Running... (${_batchCacheIds.length}/${_batchFiles.length})'
-                            : 'Prepare & Play All'),
+                            : 'Generate & Play All'),
                       ),
                     ),
                     if (_batchRunning) ...[

@@ -36,6 +36,13 @@ namespace Firsthabit.WebGL
 
         // BackgroundColorRequest removed - using hex string instead
 
+        [Serializable]
+        private class CacheInfoResponse
+        {
+            public int count;
+            public string[] ids;
+        }
+
         #endregion
 
         #region State
@@ -299,6 +306,28 @@ namespace Firsthabit.WebGL
         }
 
         /// <summary>
+        /// Get cache info (count and IDs) and send to Flutter via callback
+        /// </summary>
+        public void GetCacheInfo()
+        {
+            try
+            {
+                var response = new CacheInfoResponse
+                {
+                    count = fluentTAvatar.CacheCount,
+                    ids = fluentTAvatar.GetCachedIds()
+                };
+                string json = JsonUtility.ToJson(response);
+                Log($"CacheInfo: {json}");
+                FH_OnCacheInfo(json);
+            }
+            catch (Exception e)
+            {
+                FH_OnError("GetCacheInfo", e.Message);
+            }
+        }
+
+        /// <summary>
         /// Clear all cached motion data
         /// </summary>
         public void ClearAllCache()
@@ -307,6 +336,7 @@ namespace Firsthabit.WebGL
             {
                 fluentTAvatar.ClearCache(null);
                 Log("All cache cleared");
+                GetCacheInfo();
             }
             catch (Exception e)
             {
@@ -487,6 +517,7 @@ namespace Firsthabit.WebGL
         [DllImport("__Internal")] private static extern void FH_OnRequestSent(string id);
         [DllImport("__Internal")] private static extern void FH_OnResponseReceived(string id);
         [DllImport("__Internal")] private static extern void FH_OnVolumeChanged(float volume);
+        [DllImport("__Internal")] private static extern void FH_OnCacheInfo(string json);
         [DllImport("__Internal")] private static extern void FH_OnError(string method, string message);
         [DllImport("__Internal")] private static extern string FH_CreateAudioBlobUrl(string format);
         [DllImport("__Internal")] private static extern void FH_RevokeAudioBlobUrl(string url);
@@ -504,6 +535,7 @@ namespace Firsthabit.WebGL
         private static void FH_OnRequestSent(string id) => Debug.Log($"[FirsthabitBridge] OnRequestSent: {id}");
         private static void FH_OnResponseReceived(string id) => Debug.Log($"[FirsthabitBridge] OnResponseReceived: {id}");
         private static void FH_OnVolumeChanged(float volume) => Debug.Log($"[FirsthabitBridge] OnVolumeChanged: {volume}");
+        private static void FH_OnCacheInfo(string json) => Debug.Log($"[FirsthabitBridge] OnCacheInfo: {json}");
         private static void FH_OnError(string method, string message) => Debug.LogError($"[FirsthabitBridge] Error in {method}: {message}");
         private static string FH_CreateAudioBlobUrl(string format) { Debug.Log("[FirsthabitBridge] CreateAudioBlobUrl (Editor)"); return ""; }
         private static void FH_RevokeAudioBlobUrl(string url) { }

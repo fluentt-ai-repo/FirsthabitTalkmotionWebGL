@@ -93,6 +93,14 @@ mergeInto(LibraryManager.library, {
         if (b && b.onResponseReceived) b.onResponseReceived(id);
     },
 
+    FH_OnCacheInfo__deps: ['$FH'],
+    FH_OnCacheInfo: function(jsonPtr) {
+        var json = UTF8ToString(jsonPtr);
+        console.log('[FirsthabitBridge] CacheInfo: ' + json);
+        var b = _fhBridge();
+        if (b && b.onCacheInfo) b.onCacheInfo(json);
+    },
+
     FH_OnVolumeChanged__deps: ['$FH'],
     FH_OnVolumeChanged: function(volume) {
         console.log('[FirsthabitBridge] Volume changed: ' + volume);

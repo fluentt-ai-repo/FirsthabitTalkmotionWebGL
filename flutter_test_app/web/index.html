@@ -64,7 +64,8 @@
       onRequestSent: function(id) { console.log('[FirsthabitBridge:JS] onRequestSent: ' + id); },
       onResponseReceived: function(id) { console.log('[FirsthabitBridge:JS] onResponseReceived: ' + id); },
       onVolumeChanged: function(volume) { console.log('[FirsthabitBridge:JS] onVolumeChanged: ' + volume); },
-      onError: function(method, message) { console.log('[FirsthabitBridge:JS] onError: ' + method + ' - ' + message); }
+      onError: function(method, message) { console.log('[FirsthabitBridge:JS] onError: ' + method + ' - ' + message); },
+      onCacheInfo: function(json) { console.log('[FirsthabitBridge:JS] onCacheInfo: ' + json); }
     };
   </script>
 
