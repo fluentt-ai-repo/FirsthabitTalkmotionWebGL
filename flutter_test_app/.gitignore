@@ -1,3 +1,6 @@
+# Firebase
+.firebase/
+
 # Flutter/Dart
 .dart_tool/
 .packages
@@ -18,7 +21,6 @@ pubspec.lock
 *.freezed.dart
 *.mocks.dart
 *.config.dart
-lib/generated_plugin_registrant.dart
 
 # Unity WebGL build output (copied into web/ for testing)
 web/unity_webgl/Build/
