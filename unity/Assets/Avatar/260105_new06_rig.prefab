@@ -906,10 +906,13 @@ PrefabInstance:
       addedObject: {fileID: -237466744649397698}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6845d2177e0aecb4c8217802561e9d6b, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 7734100752757222635}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6845d2177e0aecb4c8217802561e9d6b, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 6380724616135969905}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6845d2177e0aecb4c8217802561e9d6b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7734100752757222635}
+      addedObject: {fileID: 511803895699347929}
   m_SourcePrefab: {fileID: 100100000, guid: 6845d2177e0aecb4c8217802561e9d6b, type: 3}
 --- !u!4 &183867894449962271 stripped
 Transform:
@@ -946,7 +949,7 @@ Animator:
   m_GameObject: {fileID: 5997264529775282556}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
-  m_Controller: {fileID: 9100000, guid: 03f5e67c17542e14f8df738c0417e5f5, type: 2}
+  m_Controller: {fileID: 9100000, guid: b792cf61491357a4185f3060f1f54cf7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -981,6 +984,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     onServerMotionTag:
+      m_PersistentCalls:
+        m_Calls: []
+    onSubtitleContentAdded:
       m_PersistentCalls:
         m_Calls: []
     onTalkmotionRequestSent:
@@ -1410,17 +1416,29 @@ MonoBehaviour:
         blendWeight: 1
     repeat: 1
   serverMode: 0
-  customServerSettings: {fileID: 11400000, guid: 1d8bb3fbf640bb345995d75ae97b8ab8, type: 2}
+  customServerSettings: {fileID: 11400000, guid: 709f12340c3ba2240a80574f9d3ef0cb, type: 2}
   overrideSystemPrompt: 
   overridePersonaId: 
-  normalizeHeadMotion: 0
+  faceBlendInTime: 0.1
+  faceBlendOutTime: 0.1
+  faceBlendMode: 2
+  useBaseFaceClip: 0
+  enableHeadAnimation: 1
+  normalizeHeadMotion: 1
   headPositionScale: {x: 1, y: 1, z: 1}
   headRotationScale: {x: 0.5, y: 0.7, z: 1}
-  faceBlendInTime: 0.5
-  faceBlendOutTime: 0.5
-  faceBlendMode: 2
-  useBaseFaceExpression: 0
+  headBlendInTime: 0.5
+  headBlendOutTime: 0.5
   ignoredBlendShapes: 0100000002000000030000000400000008000000090000000a0000000b000000
+  maxCacheSize: 10
+  cacheExpireSeconds: 300
+  onPrepared:
+    m_PersistentCalls:
+      m_Calls: []
+  onPrepareFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  timelineMode: 0
   onSubtitleTextStarted:
     m_PersistentCalls:
       m_Calls: []
@@ -1442,40 +1460,24 @@ MonoBehaviour:
   enableCallbackLogging: 0
   testTimelinePosition: 0
   chatText: "\uC548\uB155\uD558\uC138\uC694! \uC624\uB298 \uB0A0\uC528\uAC00 \uC5B4\uB5A4\uAC00\uC694?"
-  useContinuousChat: 0
   speechText: "\uC774\uAC83\uC740 \uC74C\uC131 \uD569\uC131 \uD14C\uC2A4\uD2B8\uC785\uB2C8\uB2E4."
-  useContinuousSpeech: 0
   translateText: Hello, how are you today?
   targetLanguage: ko
   sourceLanguage: auto
-  useContinuousTranslation: 0
   testAudioClip: {fileID: 0}
   speechMotionText: 
-  useFaceOnly: 1
+  speechMotionPlayAudio: 1
+  useContinuousMode: 0
+  prepareOnlyMode: 0
+  prepareTestCacheId: test-prepare-001
   recordingSampleRate: 16000
   maxRecordingSeconds: 30
   enableResponseSaving: 0
   responseSavePath: 
   jsonResponseFile: {fileID: 0}
   jsonResponseText: 
---- !u!114 &6380724616135969905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5997264529775282556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RigLayers:
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  m_Effectors: []
+  timelineJsonSavePath: 
+  timelineJsonLoadPath: 
 --- !u!114 &7734100752757222635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1489,7 +1491,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avatar: {fileID: 2140039744947871527}
-  animatorController: {fileID: 9100000, guid: 03f5e67c17542e14f8df738c0417e5f5, type: 2}
+  animatorController: {fileID: 9100000, guid: b792cf61491357a4185f3060f1f54cf7, type: 2}
+  idleAnimations:
+  - clip: {fileID: 7400000, guid: 8d38178ce9e0f324186c1c9c23d26362, type: 2}
+    weight: 1
+    preventRepeat: 0
   defaultIdleAnimationClip: {fileID: 7400000, guid: 8d38178ce9e0f324186c1c9c23d26362, type: 2}
   enableLookTarget: 1
   lookTarget: {fileID: 0}
@@ -1513,126 +1519,147 @@ MonoBehaviour:
     eyeStrategy: 1
     eyeLookIntoVoid: {x: 0, y: 0}
     eyeAngleVariance: {x: 0, y: 0}
-  enableClientEmotionTagging: 0
+  enableTextEmotionDetection: 1
   maxEmotionTagsPerSentence: 1
-  wordEmotionMappings: []
-  emotionMotionMappings: []
+  emotionKeywordDataset: {fileID: 11400000, guid: dd733598a5da3ee47bd2ffb3d38a3952, type: 2}
   enableServerMotionTagging: 1
-  serverMotionTagMappings:
-  - emotionTag: "\uB3D9\uC7581"
-    animationClip: {fileID: 7400000, guid: 46e9133680d054347a8135f26b39d05e, type: 2}
+  enableAutoEmotionReset: 1
+  gestureMappings:
+  - emotionTag: "\uB3D9\uC758"
+    animationClips:
+    - {fileID: 7400000, guid: 46e9133680d054347a8135f26b39d05e, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD655\uC7782"
-    animationClip: {fileID: 7400000, guid: 3658ee6c57064d14d8b4b36a03d2a629, type: 2}
+  - emotionTag: "\uD655\uC778"
+    animationClips:
+    - {fileID: 7400000, guid: 3658ee6c57064d14d8b4b36a03d2a629, type: 2}
+    - {fileID: 7400000, guid: 51a9a147447ec5f47be83685713059da, type: 2}
+    - {fileID: 7400000, guid: ebebbb6cb00a11c489aadd976e604fd3, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD655\uC7784"
-    animationClip: {fileID: 7400000, guid: 51a9a147447ec5f47be83685713059da, type: 2}
+  - emotionTag: "\uAC15\uC870"
+    animationClips:
+    - {fileID: 7400000, guid: db300b3f0d1354640aae85d407b55552, type: 2}
+    - {fileID: 7400000, guid: c0cbb520c415a4e45a0da2def94e0c53, type: 2}
+    - {fileID: 7400000, guid: 51555c00a8a908b4a9d1097953a0ff7d, type: 2}
+    - {fileID: 7400000, guid: a3e2708782a66a644acce4e9b2b87183, type: 2}
+    - {fileID: 7400000, guid: b6f96e6087b8d3547b01742c4a17b6c0, type: 2}
+    - {fileID: 7400000, guid: 1a0cb1353b5cc54459806b8558349aa8, type: 2}
+    - {fileID: 7400000, guid: 4a50fbd885465d449afe1d19257b6e6c, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD655\uC7785"
-    animationClip: {fileID: 7400000, guid: ebebbb6cb00a11c489aadd976e604fd3, type: 2}
+  - emotionTag: "\uB4E3\uAE30"
+    animationClips:
+    - {fileID: 7400000, guid: cc0293baf36701040aacd47b6f3baa18, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8701"
-    animationClip: {fileID: 7400000, guid: db300b3f0d1354640aae85d407b55552, type: 2}
+  - emotionTag: "\uBD80\uC815"
+    animationClips:
+    - {fileID: 7400000, guid: 61bdcafaedc54b543868945efc51c8bb, type: 2}
+    - {fileID: 7400000, guid: 373f66ba024351948a7117a84c071add, type: 2}
+    - {fileID: 7400000, guid: bebc1bbe73fa72a47849cfca3c20e487, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8702"
-    animationClip: {fileID: 7400000, guid: c0cbb520c415a4e45a0da2def94e0c53, type: 2}
+  - emotionTag: "\uC9C8\uBB38"
+    animationClips:
+    - {fileID: 7400000, guid: 924e575f25e5fca4d9179d0c405412cc, type: 2}
+    - {fileID: 7400000, guid: 800ec130026450b46ba5fdf4e033e61e, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8703"
-    animationClip: {fileID: 7400000, guid: 51555c00a8a908b4a9d1097953a0ff7d, type: 2}
+  - emotionTag: "\uD658\uAE30"
+    animationClips:
+    - {fileID: 7400000, guid: 628c1ed6f2d745944ba22f143cc4bbef, type: 2}
+    - {fileID: 7400000, guid: b822120660e7c9a47bd6193975f8c9be, type: 2}
+    - {fileID: 7400000, guid: 7818a34d12840bd4ea5e339f4eaa0e33, type: 2}
+    - {fileID: 0}
+    - {fileID: 7400000, guid: 5ad5b44b84f888348b4ea6c34c04c2ed, type: 2}
+    - {fileID: 7400000, guid: 21b4fc3870f17244c808aa1a7245f227, type: 2}
+    - {fileID: 7400000, guid: bf08937a9499bcf4bb5eb07269b976d0, type: 2}
+    - {fileID: 7400000, guid: 37aa96d6f617e054b994e2ec5adfd311, type: 2}
+    - {fileID: 7400000, guid: aa9837ecc127f674a9d2c0b8399f91b5, type: 2}
+    - {fileID: 7400000, guid: 04b90ddb33b0c37478cd9b48331bff78, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8705"
-    animationClip: {fileID: 7400000, guid: a3e2708782a66a644acce4e9b2b87183, type: 2}
+  - emotionTag: "\uC815\uB9AC"
+    animationClips:
+    - {fileID: 7400000, guid: b9d29221e3fa5fb42bec28c16cc4091f, type: 2}
     blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8706"
-    animationClip: {fileID: 7400000, guid: b6f96e6087b8d3547b01742c4a17b6c0, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8707"
-    animationClip: {fileID: 7400000, guid: 1a0cb1353b5cc54459806b8558349aa8, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uAC15\uC8708"
-    animationClip: {fileID: 7400000, guid: 4a50fbd885465d449afe1d19257b6e6c, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uB4E3\uAE301"
-    animationClip: {fileID: 7400000, guid: cc0293baf36701040aacd47b6f3baa18, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uBD80\uC8151"
-    animationClip: {fileID: 7400000, guid: 61bdcafaedc54b543868945efc51c8bb, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uBD80\uC8152"
-    animationClip: {fileID: 7400000, guid: 373f66ba024351948a7117a84c071add, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uBD80\uC8153"
-    animationClip: {fileID: 7400000, guid: bebc1bbe73fa72a47849cfca3c20e487, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uC9C8\uBB381"
-    animationClip: {fileID: 7400000, guid: 924e575f25e5fca4d9179d0c405412cc, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uC9C8\uBB382"
-    animationClip: {fileID: 7400000, guid: 800ec130026450b46ba5fdf4e033e61e, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE301"
-    animationClip: {fileID: 7400000, guid: 628c1ed6f2d745944ba22f143cc4bbef, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE302"
-    animationClip: {fileID: 7400000, guid: b822120660e7c9a47bd6193975f8c9be, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE303"
-    animationClip: {fileID: 7400000, guid: 7818a34d12840bd4ea5e339f4eaa0e33, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE304"
-    animationClip: {fileID: 7400000, guid: 5ad5b44b84f888348b4ea6c34c04c2ed, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE305"
-    animationClip: {fileID: 7400000, guid: 21b4fc3870f17244c808aa1a7245f227, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE306"
-    animationClip: {fileID: 7400000, guid: bf08937a9499bcf4bb5eb07269b976d0, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE309"
-    animationClip: {fileID: 7400000, guid: 37aa96d6f617e054b994e2ec5adfd311, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE3010"
-    animationClip: {fileID: 7400000, guid: aa9837ecc127f674a9d2c0b8399f91b5, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uD658\uAE3011"
-    animationClip: {fileID: 7400000, guid: 04b90ddb33b0c37478cd9b48331bff78, type: 2}
-    blendWeight: 1
-    durationOverride: 0
-  - emotionTag: "\uC815\uB9AC3"
-    animationClip: {fileID: 7400000, guid: b9d29221e3fa5fb42bec28c16cc4091f, type: 2}
-    blendWeight: 1
-    durationOverride: 0
   enableEyeBlink: 1
   blinkClip:
-    name: 
-    animationType: 0
-    curveDatas: []
+    name: DefaultEyeBlink
+    animationType: 1
+    curveDatas:
+    - relativePath: 
+      b:
+      - key: eyeBlinkLeft
+        f:
+        - t: 0
+          v: 0
+        - t: 0.06
+          v: 100
+        - t: 0.08
+          v: 100
+        - t: 0.18
+          v: 0
+        l: 0.18
+        blendWeight: 1
+      - key: eyeBlinkRight
+        f:
+        - t: 0
+          v: 0
+        - t: 0.06
+          v: 100
+        - t: 0.08
+          v: 100
+        - t: 0.18
+          v: 0
+        l: 0.18
+        blendWeight: 1
+      px:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      py:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      pz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rx:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      ry:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      rw:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      erx:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      ery:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
+      erz:
+        key: 
+        f: []
+        l: 0
+        blendWeight: 1
     repeat: 0
+  blinkBlendMode: 0
   blinkInterval: 3
   blinkIntervalVariance: 1
   head_skmr:
@@ -1699,6 +1726,121 @@ MonoBehaviour:
   actualTargetColor: {r: 0, g: 1, b: 0, a: 1}
   headVirtualTargetColor: {r: 1, g: 0, b: 0, a: 1}
   eyeVirtualTargetColor: {r: 0, g: 0, b: 1, a: 1}
+--- !u!114 &6380724616135969905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5997264529775282556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers:
+  - m_Rig: {fileID: 0}
+    m_Active: 1
+  - m_Rig: {fileID: 0}
+    m_Active: 1
+  m_Effectors: []
+--- !u!82 &511803895699347929
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5997264529775282556}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &7091281273398532178 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4436805663696350335, guid: 6845d2177e0aecb4c8217802561e9d6b, type: 3}
