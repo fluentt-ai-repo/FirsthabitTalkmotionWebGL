@@ -15,6 +15,68 @@ MonoBehaviour:
   serverURL: https://api.talkmotion.ai
   requestTimeout: 30
   maxConcurrentRequests: 3
+  useServerDefaultMotion: 0
+  motion:
+    enabled: 1
+    type: face_head
+    cfg_scale: 1.2
+    data_format: float32
+  conversationSettings:
+    useServerDefaultLLM: 1
+    useServerDefaultTTS: 1
+    useServerDefaultMotionTagging: 0
+    useServerDefaultTranslation: 1
+    llm:
+      provider: openai
+      mode: simple
+      provider_options:
+        model: gpt-4.1
+        temperature: 0.4
+        max_tokens: 100
+        stream: 1
+      prompt_context:
+        system_prompt: "\uB2F9\uC2E0\uC740 \uCE5C\uC808\uD55C AI \uBE44\uC11C\uC785\uB2C8\uB2E4."
+        session_id: 
+    tts:
+      enabled: 1
+      provider: elevenlabs
+      provider_options:
+        voice_id: zTTknNewqyBIlwnZHJzv
+        model_id: eleven_flash_v2_5
+        output_format: mp3_22050_32
+        stability: 0.8
+        use_speaker_boost: 0
+        similarity_boost: 1
+        style: 0
+        speed: 1
+        language_code: ko-KR
+        voice_name: ko-KR-Neural2-A
+        speaking_rate: 1
+        pitch: 0
+        volume_gain_db: 0
+    motionTagging:
+      enabled: 1
+      provider: openai
+      tag_set_name: FH
+      max_tags_per_sentence: 100
+      confidence_threshold: 0.5
+      skip_first_sentence: 0
+      use_streaming: 0
+    translation:
+      enabled: 0
+      provider: google
+      source_language: en
+      target_language: ko
+  speechMotionSettings:
+    useServerDefaultMotionTagging: 1
+    motionTagging:
+      enabled: 0
+      provider: openai
+      tag_set_name: FH
+      max_tags_per_sentence: 1
+      confidence_threshold: 0.5
+      skip_first_sentence: 0
+      use_streaming: 0
   requestOptions:
     useServerDefaultLLM: 1
     useServerDefaultTTS: 1
@@ -67,3 +129,4 @@ MonoBehaviour:
       provider: google
       source_language: en
       target_language: ko
+  isMigrated: 1
