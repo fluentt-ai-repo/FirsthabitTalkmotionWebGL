@@ -4,7 +4,7 @@
 # Flutter/Dart
 .dart_tool/
 .packages
-build/
+/build/
 .flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
@@ -22,10 +22,8 @@ pubspec.lock
 *.mocks.dart
 *.config.dart
 
-# Unity WebGL build output (copied into web/ for testing)
-web/unity_webgl/Build/
-web/unity_webgl/TemplateData/
-web/unity_webgl/index.html
+# Unity WebGL build output - tracked in git for deployment consistency
+!web/unity_webgl/
 
 # Misc
 .DS_Store
