@@ -24,6 +24,11 @@
   - Minor: 하위 호환 새 기능
   - Patch: 하위 호환 버그 수정
 
+### 버전 히스토리 및 문서화 규칙
+- **코드 변경과 문서 업데이트는 같은 작업 브랜치에서 함께 수행해야 합니다.** 별도 브랜치를 만들지 마세요.
+  - 작업 브랜치에서: 코드 수정 → CLAUDE.md 과제 목록 업데이트 → dev에 머지
+- **기능이 변경된 경우, 관련된 다른 문서(CLAUDE.md, FIREBASE_DEPLOY.md 등)도 함께 업데이트해야 합니다.**
+
 ### Unity .meta 파일
 - 새 파일/폴더 생성 시 반드시 `.meta` 파일 필요
 - Unity Editor 밖에서 생성한 경우 Unity를 열어 .meta 자동 생성 필요
@@ -142,7 +147,9 @@ git push origin --delete feat/기능명     # 원격 삭제
 ### 기능
 - [ ] **Queue 모드 조정** - 현재 queue 모드가 기본값. Flutter에서 queue/interrupt 모드를 선택할 수 있도록 브릿지에 설정 메서드 추가
 - [ ] **Idle 모션 다양화** - idle 모션이 단일 반복이 아닌 여러 idle 애니메이션이 랜덤/순차 재생되도록 개선
-- [ ] **투명 배경 / 컬러 조정** - WebGL 카메라 배경을 투명(alpha=0)으로 설정하거나 Flutter에서 배경색을 동적으로 변경할 수 있도록 지원
+- [x] **투명 배경 / 컬러 조정** - `SetBackgroundColor` 메서드로 구현 완료 (transparent / hex color)
+- [x] **아바타 런타임 교체** - `ChangeAvatar(avatarId)` / `GetAvatarList()` 메서드로 10개 프리팹 중 선택 교체 구현 완료
+- [x] **자막 텍스트 전달** - `PrepareAudio`에 text 파라미터 추가, 클라이언트 감정 태깅 연동 완료
 
 ### 검증/확인
 - [ ] **콜백 등록 확인** - Flutter 개발자가 콜백을 자유롭게 편집/추가/제거할 수 있는 구조인지 검토

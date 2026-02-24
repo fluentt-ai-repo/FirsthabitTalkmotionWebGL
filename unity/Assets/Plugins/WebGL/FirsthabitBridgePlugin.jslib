@@ -101,6 +101,22 @@ mergeInto(LibraryManager.library, {
         if (b && b.onCacheInfo) b.onCacheInfo(json);
     },
 
+    FH_OnAvatarChanged__deps: ['$FH'],
+    FH_OnAvatarChanged: function(jsonPtr) {
+        var json = UTF8ToString(jsonPtr);
+        console.log('[FirsthabitBridge] AvatarChanged: ' + json);
+        var b = _fhBridge();
+        if (b && b.onAvatarChanged) b.onAvatarChanged(json);
+    },
+
+    FH_OnAvatarList__deps: ['$FH'],
+    FH_OnAvatarList: function(jsonPtr) {
+        var json = UTF8ToString(jsonPtr);
+        console.log('[FirsthabitBridge] AvatarList: ' + json);
+        var b = _fhBridge();
+        if (b && b.onAvatarList) b.onAvatarList(json);
+    },
+
     FH_OnVolumeChanged__deps: ['$FH'],
     FH_OnVolumeChanged: function(volume) {
         console.log('[FirsthabitBridge] Volume changed: ' + volume);

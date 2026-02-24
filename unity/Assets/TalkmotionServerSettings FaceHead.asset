@@ -68,7 +68,7 @@ MonoBehaviour:
       source_language: en
       target_language: ko
   speechMotionSettings:
-    useServerDefaultMotionTagging: 1
+    useServerDefaultMotionTagging: 0
     motionTagging:
       enabled: 0
       provider: openai

@@ -1385,10 +1385,7 @@ MonoBehaviour:
   cameraOffset: {x: 0, y: 0.4, z: 6}
   zoomSpeed: 0.05
   cameraSmoothSpeed: 5
-  chatText: "\uC548\uB155\uD558\uC138\uC694! \uC624\uB298 \uB0A0\uC528\uAC00 \uC5B4\uB5A4\uAC00\uC694?"
   speakText: "\uC774\uAC83\uC740 \uC911\uC694\uD55C \uD575\uC2EC \uD3EC\uC778\uD2B8\uC785\uB2C8\uB2E4."
-  translateText: Hello, how are you today?
-  targetLanguage: ko
   maxLogEntries: 50
 --- !u!4 &1780731806
 Transform:

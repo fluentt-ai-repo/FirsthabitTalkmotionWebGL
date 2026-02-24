@@ -52,6 +52,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
   final _logs = <String>[];
   final _scrollController = ScrollController();
   final _cacheIdController = TextEditingController();
+  final _subtitleController = TextEditingController();
 
   String? _audioBase64;
   String _audioFormat = 'wav';
@@ -60,6 +61,14 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
   bool _playAudio = true;
   bool _bridgeReady = false;
   bool _unityConnected = false;
+
+  // Avatar state
+  static const _fallbackAvatarIds = [
+    'sangjun', 'seokhee', 'taerin',
+    'new01', 'new02', 'new03', 'new04', 'new05', 'new06', 'new07',
+  ];
+  List<String> _avatarIds = [];
+  String? _currentAvatarId;
 
   // Batch test state
   final _batchFiles = <({String base64, String format, String fileName})>[];
@@ -92,6 +101,8 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
         _unityConnected = true;
       });
       _addLog('BridgeReady');
+      // Auto-fetch avatar list on bridge ready
+      _bridge.getAvatarList();
     });
 
     _bridge.onPrepared.listen((id) {
@@ -149,6 +160,23 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
 
     _bridge.onCacheInfo.listen((info) {
       _addLog('CacheInfo: count=${info.count}, ids=${info.ids}');
+    });
+
+    _bridge.onAvatarChanged.listen((e) {
+      if (e.success) {
+        setState(() => _currentAvatarId = e.avatarId);
+        _addLog('AvatarChanged: ${e.avatarId}');
+      } else {
+        _addLog('AvatarChanged FAILED: ${e.avatarId} - ${e.error}');
+      }
+    });
+
+    _bridge.onAvatarList.listen((e) {
+      setState(() {
+        _avatarIds = e.avatarIds;
+        _currentAvatarId = e.currentAvatarId;
+      });
+      _addLog('AvatarList: ${e.avatarIds} (current: ${e.currentAvatarId})');
     });
   }
 
@@ -391,6 +419,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
     _bridge.dispose();
     _scrollController.dispose();
     _cacheIdController.dispose();
+    _subtitleController.dispose();
     super.dispose();
   }
 
@@ -473,12 +502,27 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _subtitleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Subtitle Text',
+                    hintText: 'Enter text for emotion tagging',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                  maxLines: 2,
+                  minLines: 1,
+                ),
+                const SizedBox(height: 6),
                 FilledButton.icon(
                   onPressed: _audioBase64 != null
                       ? () {
-                          _bridge.prepareAudio(_audioBase64!, _audioFormat);
-                          _addLog('>> Prepare: $_audioFileName');
+                          final text = _subtitleController.text.trim();
+                          _bridge.prepareAudio(_audioBase64!, _audioFormat, text: text);
+                          _addLog('>> Prepare: $_audioFileName${text.isNotEmpty ? ' (text: ${text.length} chars)' : ' (no text)'}');
                         }
                       : null,
                   icon: const Icon(Icons.upload_file, size: 18),
@@ -554,6 +598,61 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                     const Icon(Icons.volume_up, size: 18),
                   ],
                 ),
+
+                // --- Avatar controls ---
+                const Divider(height: 16),
+                Row(
+                  children: [
+                    Text('Avatar', style: Theme.of(context).textTheme.titleSmall),
+                    if (_currentAvatarId != null) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '(current: $_currentAvatarId)',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                    const Spacer(),
+                    SizedBox(
+                      height: 28,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          _bridge.getAvatarList();
+                          _addLog('>> GetAvatarList');
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        child: const Text('Refresh', style: TextStyle(fontSize: 11)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: (_avatarIds.isNotEmpty ? _avatarIds : _fallbackAvatarIds).map((id) {
+                    final isSelected = id == _currentAvatarId;
+                    return ChoiceChip(
+                      label: Text(id, style: const TextStyle(fontSize: 12)),
+                      selected: isSelected,
+                      onSelected: (_) {
+                        if (!isSelected) {
+                          _bridge.changeAvatar(id);
+                          _addLog('>> ChangeAvatar: $id');
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
+                if (_avatarIds.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'Using fallback list (Unity not configured yet)',
+                      style: TextStyle(fontSize: 10, color: Colors.orange.shade700),
+                    ),
+                  ),
 
                 // --- Background controls ---
                 const Divider(height: 16),

@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using FluentT.APIClient.V3;
+using System.Collections.Generic;
+using FluentT.Avatar.SampleFloatingHead;
 using FluentT.Talkmotion;
 using FluentT.Talkmotion.Timeline.UnityTimeline;
 using UnityEngine;
@@ -17,14 +19,25 @@ namespace Firsthabit.WebGL
         [SerializeField] private FluentTAvatar fluentTAvatar;
         [SerializeField] private bool enableLogging = true;
 
+        [Header("Avatar Management")]
+        [SerializeField] private AvatarEntry[] avatarEntries;
+
         #endregion
 
         #region Data Classes
 
         [Serializable]
+        public class AvatarEntry
+        {
+            public string id;
+            public GameObject prefab;
+        }
+
+        [Serializable]
         private class PrepareRequest
         {
             public string format = "wav";
+            public string text = "";
         }
 
         [Serializable]
@@ -34,8 +47,6 @@ namespace Firsthabit.WebGL
             public bool playAudio = true;
         }
 
-        // BackgroundColorRequest removed - using hex string instead
-
         [Serializable]
         private class CacheInfoResponse
         {
@@ -43,11 +54,29 @@ namespace Firsthabit.WebGL
             public string[] ids;
         }
 
+        [Serializable]
+        private class AvatarListResponse
+        {
+            public string[] avatarIds;
+            public string currentAvatarId;
+        }
+
+        [Serializable]
+        private class AvatarChangedResponse
+        {
+            public string avatarId;
+            public bool success;
+            public string error;
+        }
+
         #endregion
 
         #region State
 
         private string currentPlayingCacheId;
+        private Dictionary<string, GameObject> avatarPrefabMap;
+        private string currentAvatarId;
+        private GameObject currentAvatarInstance;
 
         #endregion
 
@@ -55,6 +84,20 @@ namespace Firsthabit.WebGL
 
         private void Awake()
         {
+            // Build avatar prefab map
+            avatarPrefabMap = new Dictionary<string, GameObject>();
+            if (avatarEntries != null)
+            {
+                foreach (var entry in avatarEntries)
+                {
+                    if (entry != null && !string.IsNullOrEmpty(entry.id) && entry.prefab != null)
+                    {
+                        avatarPrefabMap[entry.id] = entry.prefab;
+                    }
+                }
+                Log($"Avatar prefab map built: {avatarPrefabMap.Count} entries");
+            }
+
             if (fluentTAvatar == null)
             {
                 fluentTAvatar = FindAnyObjectByType<FluentTAvatar>();
@@ -65,6 +108,9 @@ namespace Firsthabit.WebGL
                 }
                 Log($"FluentTAvatar auto-found: {fluentTAvatar.name}");
             }
+
+            // Track the initial avatar instance
+            currentAvatarInstance = fluentTAvatar.gameObject;
         }
 
         private void Start()
@@ -110,14 +156,27 @@ namespace Firsthabit.WebGL
         {
             if (fluentTAvatar == null) return;
 
-            fluentTAvatar.onPrepared.RemoveListener(OnAvatarPrepared);
-            fluentTAvatar.onPrepareFailed.RemoveListener(OnAvatarPrepareFailed);
-            fluentTAvatar.callback.onSentenceStarted.RemoveListener(OnAvatarSentenceStarted);
-            fluentTAvatar.callback.onSentenceEnded.RemoveListener(OnAvatarSentenceEnded);
-            fluentTAvatar.callback.onTalkmotionRequestSent.RemoveListener(OnAvatarRequestSent);
-            fluentTAvatar.callback.onTalkmotionResponseReceived.RemoveListener(OnAvatarResponseReceived);
-            fluentTAvatar.OnSubtitleTextStarted.RemoveListener(OnSubtitleStarted);
-            fluentTAvatar.OnSubtitleTextEnded.RemoveListener(OnSubtitleEnded);
+            try
+            {
+                fluentTAvatar.onPrepared.RemoveListener(OnAvatarPrepared);
+                fluentTAvatar.onPrepareFailed.RemoveListener(OnAvatarPrepareFailed);
+
+                var cb = fluentTAvatar.callback;
+                if (cb != null)
+                {
+                    cb.onSentenceStarted.RemoveListener(OnAvatarSentenceStarted);
+                    cb.onSentenceEnded.RemoveListener(OnAvatarSentenceEnded);
+                    cb.onTalkmotionRequestSent.RemoveListener(OnAvatarRequestSent);
+                    cb.onTalkmotionResponseReceived.RemoveListener(OnAvatarResponseReceived);
+                }
+
+                fluentTAvatar.OnSubtitleTextStarted.RemoveListener(OnSubtitleStarted);
+                fluentTAvatar.OnSubtitleTextEnded.RemoveListener(OnSubtitleEnded);
+            }
+            catch (Exception e)
+            {
+                Log($"UnregisterCallbacks: partial failure - {e.Message}");
+            }
         }
 
         #endregion
@@ -127,7 +186,7 @@ namespace Firsthabit.WebGL
         /// <summary>
         /// Prepare audio: reads base64 from JS, creates AudioClip via blob URL,
         /// then calls PrepareSpeechMotion to send to server and cache.
-        /// JSON: { "format": "wav" }
+        /// JSON: { "format": "wav", "text": "subtitle text" }
         /// onPrepared(cacheId) fires when server processing is complete.
         /// </summary>
         public void PrepareAudio(string json)
@@ -213,8 +272,8 @@ namespace Firsthabit.WebGL
                 // onPrepared(cacheId) will fire when server processing is complete
                 try
                 {
-                    string cacheId = fluentTAvatar.PrepareSpeechMotion(clip, "", null);
-                    Log($"PrepareAudio: PrepareSpeechMotion called, cacheId={cacheId}");
+                    string cacheId = fluentTAvatar.PrepareSpeechMotion(clip, request.text ?? "", null);
+                    Log($"PrepareAudio: PrepareSpeechMotion called, cacheId={cacheId}, text={request.text}");
                 }
                 catch (Exception e)
                 {
@@ -345,12 +404,152 @@ namespace Firsthabit.WebGL
         }
 
         /// <summary>
-        /// Change avatar (TODO - Addressable)
+        /// Change avatar by ID. Destroys current avatar, instantiates new one,
+        /// re-registers callbacks, and notifies Flutter.
         /// </summary>
-        public void ChangeAvatar(string key)
+        public void ChangeAvatar(string avatarId)
         {
-            Log($"ChangeAvatar: {key} (not yet implemented)");
-            FH_OnError("ChangeAvatar", "Not yet implemented");
+            try
+            {
+                // Skip if same avatar
+                if (avatarId == currentAvatarId)
+                {
+                    Log($"ChangeAvatar: already using '{avatarId}', skipping");
+                    var skipResponse = new AvatarChangedResponse
+                    {
+                        avatarId = avatarId,
+                        success = true,
+                        error = ""
+                    };
+                    FH_OnAvatarChanged(JsonUtility.ToJson(skipResponse));
+                    return;
+                }
+
+                // Look up prefab
+                if (!avatarPrefabMap.TryGetValue(avatarId, out GameObject prefab))
+                {
+                    var errorMsg = $"Avatar '{avatarId}' not found in avatarEntries";
+                    LogError("ChangeAvatar", errorMsg);
+                    var errorResponse = new AvatarChangedResponse
+                    {
+                        avatarId = avatarId,
+                        success = false,
+                        error = errorMsg
+                    };
+                    FH_OnAvatarChanged(JsonUtility.ToJson(errorResponse));
+                    return;
+                }
+
+                Log($"ChangeAvatar: switching from '{currentAvatarId}' to '{avatarId}'");
+
+                // Unregister callbacks first (before SDK state changes)
+                UnregisterCallbacks();
+
+                // Stop playback and clear cache
+                fluentTAvatar.StopTalkMotion();
+                fluentTAvatar.ClearCache(null);
+                currentPlayingCacheId = null;
+
+                // Save transform of current avatar
+                var pos = currentAvatarInstance != null
+                    ? currentAvatarInstance.transform.position : Vector3.zero;
+                var rot = currentAvatarInstance != null
+                    ? currentAvatarInstance.transform.rotation : Quaternion.identity;
+
+                // Destroy current avatar
+                if (currentAvatarInstance != null)
+                    Destroy(currentAvatarInstance);
+
+                // Instantiate new avatar
+                currentAvatarInstance = Instantiate(prefab, pos, rot);
+                currentAvatarId = avatarId;
+
+                // Get FluentTAvatar component from new instance
+                fluentTAvatar = currentAvatarInstance.GetComponent<FluentTAvatar>();
+                if (fluentTAvatar == null)
+                {
+                    fluentTAvatar = currentAvatarInstance.GetComponentInChildren<FluentTAvatar>();
+                }
+
+                if (fluentTAvatar == null)
+                {
+                    var errorMsg = "FluentTAvatar component not found on new avatar";
+                    LogError("ChangeAvatar", errorMsg);
+                    var errorResponse = new AvatarChangedResponse
+                    {
+                        avatarId = avatarId,
+                        success = false,
+                        error = errorMsg
+                    };
+                    FH_OnAvatarChanged(JsonUtility.ToJson(errorResponse));
+                    return;
+                }
+
+                // Set look target on the floating head controller
+                var headController = currentAvatarInstance
+                    .GetComponent<FluentTAvatarControllerFloatingHead>();
+                if (headController == null)
+                {
+                    headController = currentAvatarInstance
+                        .GetComponentInChildren<FluentTAvatarControllerFloatingHead>();
+                }
+                if (headController != null && Camera.main != null)
+                {
+                    headController.SetLookTarget(Camera.main.transform);
+                    Log("ChangeAvatar: look target set to main camera");
+                }
+
+                // Register callbacks on new avatar
+                RegisterCallbacks();
+
+                Log($"ChangeAvatar: successfully changed to '{avatarId}'");
+
+                var successResponse = new AvatarChangedResponse
+                {
+                    avatarId = avatarId,
+                    success = true,
+                    error = ""
+                };
+                FH_OnAvatarChanged(JsonUtility.ToJson(successResponse));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[FirsthabitBridge] ChangeAvatar: {e.Message}\n{e.StackTrace}");
+                var errorResponse = new AvatarChangedResponse
+                {
+                    avatarId = avatarId,
+                    success = false,
+                    error = e.Message
+                };
+                FH_OnAvatarChanged(JsonUtility.ToJson(errorResponse));
+            }
+        }
+
+        /// <summary>
+        /// Get list of available avatar IDs and current avatar ID.
+        /// Sends result to Flutter via FH_OnAvatarList callback.
+        /// String param is ignored (required for SendMessage compatibility).
+        /// </summary>
+        public void GetAvatarList(string ignored)
+        {
+            try
+            {
+                var keys = new string[avatarPrefabMap.Count];
+                avatarPrefabMap.Keys.CopyTo(keys, 0);
+
+                var response = new AvatarListResponse
+                {
+                    avatarIds = keys,
+                    currentAvatarId = currentAvatarId
+                };
+                string json = JsonUtility.ToJson(response);
+                Log($"AvatarList: {json}");
+                FH_OnAvatarList(json);
+            }
+            catch (Exception e)
+            {
+                FH_OnError("GetAvatarList", e.Message);
+            }
         }
 
         /// <summary>
@@ -518,6 +717,8 @@ namespace Firsthabit.WebGL
         [DllImport("__Internal")] private static extern void FH_OnResponseReceived(string id);
         [DllImport("__Internal")] private static extern void FH_OnVolumeChanged(float volume);
         [DllImport("__Internal")] private static extern void FH_OnCacheInfo(string json);
+        [DllImport("__Internal")] private static extern void FH_OnAvatarChanged(string json);
+        [DllImport("__Internal")] private static extern void FH_OnAvatarList(string json);
         [DllImport("__Internal")] private static extern void FH_OnError(string method, string message);
         [DllImport("__Internal")] private static extern string FH_CreateAudioBlobUrl(string format);
         [DllImport("__Internal")] private static extern void FH_RevokeAudioBlobUrl(string url);
@@ -536,6 +737,8 @@ namespace Firsthabit.WebGL
         private static void FH_OnResponseReceived(string id) => Debug.Log($"[FirsthabitBridge] OnResponseReceived: {id}");
         private static void FH_OnVolumeChanged(float volume) => Debug.Log($"[FirsthabitBridge] OnVolumeChanged: {volume}");
         private static void FH_OnCacheInfo(string json) => Debug.Log($"[FirsthabitBridge] OnCacheInfo: {json}");
+        private static void FH_OnAvatarChanged(string json) => Debug.Log($"[FirsthabitBridge] OnAvatarChanged: {json}");
+        private static void FH_OnAvatarList(string json) => Debug.Log($"[FirsthabitBridge] OnAvatarList: {json}");
         private static void FH_OnError(string method, string message) => Debug.LogError($"[FirsthabitBridge] Error in {method}: {message}");
         private static string FH_CreateAudioBlobUrl(string format) { Debug.Log("[FirsthabitBridge] CreateAudioBlobUrl (Editor)"); return ""; }
         private static void FH_RevokeAudioBlobUrl(string url) { }

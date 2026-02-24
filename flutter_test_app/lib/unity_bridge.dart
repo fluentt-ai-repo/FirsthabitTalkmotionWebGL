@@ -27,6 +27,8 @@ class UnityBridge {
   final _onVolumeChanged = StreamController<double>.broadcast();
   final _onError = StreamController<({String method, String message})>.broadcast();
   final _onCacheInfo = StreamController<({int count, List<String> ids})>.broadcast();
+  final _onAvatarChanged = StreamController<({String avatarId, bool success, String error})>.broadcast();
+  final _onAvatarList = StreamController<({List<String> avatarIds, String currentAvatarId})>.broadcast();
 
   // Public streams
   Stream<void> get onBridgeReady => _onBridgeReady.stream;
@@ -43,6 +45,8 @@ class UnityBridge {
   Stream<double> get onVolumeChanged => _onVolumeChanged.stream;
   Stream<({String method, String message})> get onError => _onError.stream;
   Stream<({int count, List<String> ids})> get onCacheInfo => _onCacheInfo.stream;
+  Stream<({String avatarId, bool success, String error})> get onAvatarChanged => _onAvatarChanged.stream;
+  Stream<({List<String> avatarIds, String currentAvatarId})> get onAvatarList => _onAvatarList.stream;
 
   UnityBridge() {
     _registerCallbacks();
@@ -96,6 +100,19 @@ class UnityBridge {
         final ids = (map['ids'] as List<dynamic>).cast<String>();
         _onCacheInfo.add((count: count, ids: ids));
       }).toJS,
+      onAvatarChanged: ((JSString json) {
+        final map = jsonDecode(json.toDart) as Map<String, dynamic>;
+        final avatarId = map['avatarId'] as String;
+        final success = map['success'] as bool;
+        final error = (map['error'] as String?) ?? '';
+        _onAvatarChanged.add((avatarId: avatarId, success: success, error: error));
+      }).toJS,
+      onAvatarList: ((JSString json) {
+        final map = jsonDecode(json.toDart) as Map<String, dynamic>;
+        final avatarIds = (map['avatarIds'] as List<dynamic>).cast<String>();
+        final currentAvatarId = map['currentAvatarId'] as String;
+        _onAvatarList.add((avatarIds: avatarIds, currentAvatarId: currentAvatarId));
+      }).toJS,
     );
 
     // Set window.FirsthabitBridge = bridge
@@ -109,9 +126,10 @@ class UnityBridge {
   /// Prepare audio: sends base64-encoded audio to Unity for local storage.
   /// [base64Audio] is the base64-encoded audio bytes.
   /// [format] is one of: wav, mp3, m4a, ogg.
-  void prepareAudio(String base64Audio, String format) {
+  /// [text] is the subtitle/transcript text for emotion tagging.
+  void prepareAudio(String base64Audio, String format, {String text = ''}) {
     _pendingAudioBase64 = base64Audio.toJS;
-    final json = '{"format":"${_escapeJson(format)}"}';
+    final json = '{"format":"${_escapeJson(format)}","text":"${_escapeJson(text)}"}';
     _sendToUnity('PrepareAudio', json);
   }
 
@@ -137,8 +155,12 @@ class UnityBridge {
     _sendToUnity('GetCacheInfo', '');
   }
 
-  void changeAvatar(String key) {
-    _sendToUnity('ChangeAvatar', key);
+  void changeAvatar(String avatarId) {
+    _sendToUnity('ChangeAvatar', avatarId);
+  }
+
+  void getAvatarList() {
+    _sendToUnity('GetAvatarList', '');
   }
 
   /// Set camera background color.
@@ -179,6 +201,8 @@ class UnityBridge {
     _onVolumeChanged.close();
     _onError.close();
     _onCacheInfo.close();
+    _onAvatarChanged.close();
+    _onAvatarList.close();
   }
 }
 
@@ -223,5 +247,7 @@ extension type _FirsthabitBridgeJS._(JSObject _) implements JSObject {
     JSFunction onVolumeChanged,
     JSFunction onError,
     JSFunction onCacheInfo,
+    JSFunction onAvatarChanged,
+    JSFunction onAvatarList,
   });
 }

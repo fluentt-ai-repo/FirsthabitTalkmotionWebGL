@@ -770,7 +770,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a7d4550348d6f0e4db0e87b3c1961cf5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7d4550348d6f0e4db0e87b3c1961cf5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1620,7 +1620,7 @@ MonoBehaviour:
   eyeSpeed: 10
   eyeControlStrategy: 0
   eyeBlendShapes:
-    globalScale: 1
+    globalScale: 6
     eyeLookUpLeftIdx:
     - skmr: {fileID: 821926977766921808}
       blendShapeName: eyeLookUpLeft

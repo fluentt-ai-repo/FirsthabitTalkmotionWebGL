@@ -119,71 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &85788325
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -7204718938699844663, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: lookTarget
-      value: 
-      objectReference: {fileID: 330585546}
-    - target: {fileID: -7204718938699844663, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: eyeVirtualTargetRef
-      value: 
-      objectReference: {fileID: 1242897597}
-    - target: {fileID: 8470210462853574089, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_Name
-      value: 260107_sangjun_rig
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9135528915062716275, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
 --- !u!1 &146730333
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,8 +417,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239c07a2691de1f4b829fd3dcef3ca7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Firsthabit.WebGL.FirsthabitWebGLBridge
-  fluentTAvatar: {fileID: 1964602101}
+  fluentTAvatar: {fileID: 0}
   enableLogging: 1
+  avatarEntries:
+  - id: taerin
+    prefab: {fileID: 2942364825859875575, guid: e8683e82701b87349b2160c556c08fd6, type: 3}
+  - id: sangjun
+    prefab: {fileID: 8470210462853574089, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
+  - id: seokhee
+    prefab: {fileID: 6526420425472621950, guid: 579aa46bd73c8354a9b5dad977cb5388, type: 3}
+  - id: new01
+    prefab: {fileID: 1345558796633791394, guid: 8333f254b1cd7d240850e195529e0eea, type: 3}
+  - id: new02
+    prefab: {fileID: 279676593085248200, guid: 6f79c7d9cc870424a9367883950f3275, type: 3}
+  - id: new03
+    prefab: {fileID: 9198021502315600847, guid: 87b913e22d5059942ba2302f4ce7868d, type: 3}
+  - id: new04
+    prefab: {fileID: 7120353886316051332, guid: 05180334fcd12dc47958e8b18ae6cd7e, type: 3}
+  - id: new05
+    prefab: {fileID: 154339449693929586, guid: 9350702b548d21b45a36f0c235eba6a1, type: 3}
+  - id: new06
+    prefab: {fileID: 5997264529775282556, guid: 997c4d9261e3f7547ab7926c21617af0, type: 3}
+  - id: new07
+    prefab: {fileID: 2146116158203811971, guid: f90c943cf234bfd42a6560f15b35c8b5, type: 3}
+  defaultAvatarId: sangjun
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,23 +1268,11 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &1964602101 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -3718989010085238237, guid: 7c3fe6ac0b802074a83017e3c64660ae, type: 3}
-  m_PrefabInstance: {fileID: 85788325}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4f0565a90d64a448a59d4d1d8fe6af4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 330585546}
-  - {fileID: 85788325}
   - {fileID: 1494242711}
   - {fileID: 299178007}
   - {fileID: 1588335105}
