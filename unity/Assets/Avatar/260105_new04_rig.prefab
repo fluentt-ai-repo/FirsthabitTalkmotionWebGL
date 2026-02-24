@@ -1810,6 +1810,10 @@ MonoBehaviour:
     - {fileID: 7400000, guid: b6f96e6087b8d3547b01742c4a17b6c0, type: 2}
     - {fileID: 7400000, guid: 1a0cb1353b5cc54459806b8558349aa8, type: 2}
     - {fileID: 7400000, guid: 4a50fbd885465d449afe1d19257b6e6c, type: 2}
+    - {fileID: 7400000, guid: 0b20de044b405a448b7e29107ab3d072, type: 2}
+    - {fileID: 7400000, guid: 8a66a1c80d7a3ee42bb9216dbbb8bb8d, type: 2}
+    - {fileID: 7400000, guid: 57fc60b3c460d6d41a3c702d9f731432, type: 2}
+    - {fileID: 7400000, guid: 1c23d3d804ed9274eaf7300f7ab2bbcd, type: 2}
     blendWeight: 1
   - emotionTag: "\uB4E3\uAE30"
     animationClips:
@@ -1842,6 +1846,44 @@ MonoBehaviour:
   - emotionTag: "\uC815\uB9AC"
     animationClips:
     - {fileID: 7400000, guid: b9d29221e3fa5fb42bec28c16cc4091f, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uC720\uB09C"
+    animationClips:
+    - {fileID: 7400000, guid: 58491a82a6601924c8e5978385812602, type: 2}
+    - {fileID: 7400000, guid: 0c83b5b42fb691c4ca64cf875c74655f, type: 2}
+    - {fileID: 7400000, guid: d16a03e0c1f2f8c41a947d925f2a9a2b, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uB2F9\uC5F0"
+    animationClips:
+    - {fileID: 7400000, guid: 2f6136355ef58c046bd43ad524c4bdab, type: 2}
+    - {fileID: 7400000, guid: a368a52ce73ee6f4f9dcefc9f9fe8ac6, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uAE0D\uC815"
+    animationClips:
+    - {fileID: 7400000, guid: 929f6038c36e2c64e9cdfc06fc3866e2, type: 2}
+    - {fileID: 7400000, guid: 76ce80d5e0ec8a547b69407a4ba2d71f, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uC81C\uC548"
+    animationClips:
+    - {fileID: 7400000, guid: 9d61d29bff87ff44a9584e916c702344, type: 2}
+    - {fileID: 7400000, guid: e6e7a5e575905524bb5a5ee4c7f6c626, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uACB0\uB860"
+    animationClips:
+    - {fileID: 7400000, guid: 62daa715dbefe6f48bc3195fd02f4ce9, type: 2}
+    - {fileID: 7400000, guid: 4620abf6e61c0ed4cb990dcf274c058f, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uBC84\uBC85\uC784"
+    animationClips:
+    - {fileID: 7400000, guid: 197463b1fb8507e4a881089ccdfa0c3f, type: 2}
+    - {fileID: 7400000, guid: 9b82eaab42a65834ea34d4a512b62e04, type: 2}
+    blendWeight: 1
+  - emotionTag: "\uC554\uC0B0"
+    animationClips:
+    - {fileID: 7400000, guid: da0ad21e21293c24b8ab6f29329cf367, type: 2}
+    - {fileID: 7400000, guid: 6d774c666642b28439542e08c5f1021a, type: 2}
+    - {fileID: 7400000, guid: f3f63d4ad31a3254a9cca48e6f949ef8, type: 2}
+    - {fileID: 7400000, guid: 5d5b3b074fb622a48950ce13369e2347, type: 2}
     blendWeight: 1
   enableEyeBlink: 1
   blinkClip:
