@@ -8,7 +8,7 @@
 2. [사전 준비](#2-사전-준비)
 3. [Step-by-Step 통합 가이드](#3-step-by-step-통합-가이드)
 4. [API Reference](#4-api-reference)
-5. [전체 사용 흐름 (Prepare → Play)](#5-전체-사용-흐름-prepare--play)
+5. [전체 사용 흐름](#5-전체-사용-흐름-prepare--play) (PrepareAudio / Chat / Speak)
 6. [샘플 코드](#6-샘플-코드)
 7. [Troubleshooting](#7-troubleshooting)
 8. [참고 정보](#8-참고-정보)
@@ -550,6 +550,8 @@ controller.addJavaScriptHandler(
 | 메서드 | 파라미터 | 설명 | 관련 콜백 |
 |--------|---------|------|----------|
 | `PrepareAudio` | JSON: `{"format":"wav","text":""}` | 오디오 모션 준비. `_pendingAudioBase64`에 base64 데이터를 먼저 세팅해야 합니다 | `onPrepared` / `onPrepareFailed` |
+| `Chat` | JSON: `{"text":"...", "prepareOnly":false, "playAudio":true}` | LLM 대화 + TTS + 모션. 서버 LLM이 응답 생성 후 TTS 음성과 모션을 만듭니다 | `onPrepared` → `onPlaybackStarted` → `onPlaybackCompleted` |
+| `Speak` | JSON: `{"text":"...", "subtitleText":"", "prepareOnly":false, "playAudio":true}` | TTS + 모션 (LLM 없음). 텍스트를 직접 음성으로 변환하고 모션을 생성합니다 | `onPrepared` → `onPlaybackStarted` → `onPlaybackCompleted` |
 | `Play` | JSON: `{"cacheId":"xxx","playAudio":true}` | 준비된 캐시 항목 재생 | `onPlaybackStarted` → `onPlaybackCompleted` |
 | `Stop` | *(없음)* | 현재 재생 즉시 중지 | - |
 | `SetVolume` | `"0.0"` ~ `"1.0"` (문자열) | 음량 설정 | `onVolumeChanged` |
@@ -567,6 +569,31 @@ controller.addJavaScriptHandler(
   "text": ""         // 자막/감정 태깅용 텍스트 (선택사항, 기본값 "")
 }
 ```
+
+#### Chat JSON 스키마
+
+```json
+{
+  "text": "사용자 메시지",     // LLM에 보낼 사용자 입력 텍스트
+  "prepareOnly": false,       // false(기본값): 준비 후 자동 재생 / true: 준비만 (Play로 수동 재생)
+  "playAudio": true           // true(기본값): 오디오 + 모션 / false: 모션만
+}
+```
+
+> **Chat vs Speak**: Chat은 FluentT 서버의 LLM이 입력 텍스트에 대해 응답을 생성한 뒤, 그 응답을 TTS로 변환하고 모션을 만듭니다. 챗봇처럼 대화형 응답이 필요할 때 사용합니다.
+
+#### Speak JSON 스키마
+
+```json
+{
+  "text": "읽을 텍스트",       // TTS로 변환할 텍스트
+  "subtitleText": "",          // 별도 자막 텍스트 (선택사항, 비어있으면 text 사용)
+  "prepareOnly": false,        // false(기본값): 준비 후 자동 재생 / true: 준비만 (Play로 수동 재생)
+  "playAudio": true            // true(기본값): 오디오 + 모션 / false: 모션만
+}
+```
+
+> **Speak vs PrepareAudio**: Speak은 텍스트만 보내면 서버가 TTS 음성 + 모션을 자동 생성합니다. PrepareAudio는 클라이언트 측에서 이미 생성된 오디오 파일을 전달할 때 사용합니다.
 
 #### Play JSON 스키마
 
@@ -695,7 +722,101 @@ Flutter App          HTML/JS              Unity (C#)           FluentT Server
     │                   │                     │                      │
 ```
 
-### 5.2 에러 처리 패턴
+### 5.2 Chat 흐름 (LLM + TTS + Motion)
+
+Chat API는 텍스트만 보내면 서버 LLM이 응답을 생성하고, TTS + 모션까지 자동으로 처리합니다.
+
+```
+Flutter App          HTML/JS              Unity (C#)           FluentT Server
+    │                   │                     │                      │
+    │ Chat (immediate)  │                     │                      │
+    │ ─── evaluateJS ──>│ ── SendMessage ────>│                      │
+    │                   │                     │ ── PrepareChat ──────>│
+    │                   │  <── onRequestSent ──│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │    [LLM 응답 생성]    │
+    │                   │                     │    [TTS 변환]         │
+    │                   │                     │    [모션 생성]         │
+    │                   │                     │  <── 모션 데이터 ──── │
+    │                   │  <─ onResponseRecv ──│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │  <── onPrepared ─────│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │ ── auto PlayPrepared  │
+    │                   │  <─ onPlaybackStart ─│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │ ── 모션 + 오디오 재생  │
+    │                   │  <── onSentence* ────│                     │
+    │                   │  <── onSubtitle* ────│                     │
+    │                   │  <─ onPlaybackEnd ───│                     │
+    │  <── callHandler ──│                    │                      │
+```
+
+#### Chat 사용 예시 (Dart)
+
+```dart
+// 즉시 재생 (prepareOnly: false가 기본값)
+await _sendToUnity('Chat', '{"text":"안녕하세요, 오늘 날씨 어때요?"}');
+
+// 준비만 → 나중에 Play
+await _sendToUnity('Chat', '{"text":"안녕하세요","prepareOnly":true}');
+// onPrepared 콜백에서 cacheId 수신 후:
+await _sendToUnity('Play', '{"cacheId":"$cacheId","playAudio":true}');
+```
+
+### 5.3 Speak 흐름 (TTS + Motion, LLM 없음)
+
+Speak API는 입력 텍스트를 그대로 TTS로 변환하여 음성과 모션을 생성합니다. LLM 응답 없이 지정한 텍스트를 그대로 읽습니다.
+
+```
+Flutter App          HTML/JS              Unity (C#)           FluentT Server
+    │                   │                     │                      │
+    │ Speak (immediate) │                     │                      │
+    │ ─── evaluateJS ──>│ ── SendMessage ────>│                      │
+    │                   │                     │ ── PrepareSpeak ─────>│
+    │                   │  <── onRequestSent ──│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │    [TTS 변환]         │
+    │                   │                     │    [모션 생성]         │
+    │                   │                     │  <── 모션 데이터 ──── │
+    │                   │  <─ onResponseRecv ──│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │  <── onPrepared ─────│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │ ── auto PlayPrepared  │
+    │                   │  <─ onPlaybackStart ─│                     │
+    │  <── callHandler ──│                    │                      │
+    │                   │                     │ ── 모션 + 오디오 재생  │
+    │                   │  <── onSubtitle* ────│                     │
+    │                   │  <─ onPlaybackEnd ───│                     │
+    │  <── callHandler ──│                    │                      │
+```
+
+#### Speak 사용 예시 (Dart)
+
+```dart
+// 즉시 재생
+await _sendToUnity('Speak', '{"text":"안녕하세요, 반갑습니다."}');
+
+// 자막 텍스트를 별도 지정 (TTS 발음용 텍스트와 자막이 다를 때)
+await _sendToUnity('Speak', '{"text":"Hello, nice to meet you.","subtitleText":"안녕하세요, 반갑습니다."}');
+
+// 준비만 → 나중에 Play
+await _sendToUnity('Speak', '{"text":"안녕하세요","prepareOnly":true}');
+```
+
+### 5.4 API 비교: PrepareAudio vs Chat vs Speak
+
+| 특성 | PrepareAudio | Chat | Speak |
+|------|-------------|------|-------|
+| **입력** | 오디오 파일 (base64) | 텍스트 | 텍스트 |
+| **LLM 사용** | X | O (서버 LLM이 응답 생성) | X |
+| **TTS 사용** | X (클라이언트 제공 오디오) | O (서버 TTS) | O (서버 TTS) |
+| **모션 생성** | O | O | O |
+| **자동 재생** | X (항상 prepare-only) | O (prepareOnly=false) | O (prepareOnly=false) |
+| **사용 사례** | 외부 TTS 오디오로 모션 생성 | 대화형 챗봇 | 안내 멘트, 내레이션 |
+
+### 5.5 에러 처리 패턴
 
 ```dart
 // onPrepareFailed: 모션 준비 실패
@@ -887,6 +1008,27 @@ class TalkmotionWebViewState extends State<TalkmotionWebView> {
     await _sendToUnity('ClearAllCache');
   }
 
+  /// Chat: LLM 대화 + TTS + 모션
+  ///
+  /// 서버 LLM이 [text]에 대한 응답을 생성하고, TTS 음성과 모션을 만듭니다.
+  /// [prepareOnly] - true면 준비만, false(기본)면 자동 재생
+  /// [playAudio] - true(기본)면 오디오+모션, false면 모션만
+  Future<void> chat(String text, {bool prepareOnly = false, bool playAudio = true}) async {
+    final json = '{"text":"${_escapeJson(text)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+    await _sendToUnity('Chat', json);
+  }
+
+  /// Speak: TTS + 모션 (LLM 없음)
+  ///
+  /// [text]를 그대로 TTS 음성으로 변환하고 모션을 생성합니다.
+  /// [subtitleText] - 별도 자막 텍스트 (선택사항)
+  /// [prepareOnly] - true면 준비만, false(기본)면 자동 재생
+  /// [playAudio] - true(기본)면 오디오+모션, false면 모션만
+  Future<void> speak(String text, {String subtitleText = '', bool prepareOnly = false, bool playAudio = true}) async {
+    final json = '{"text":"${_escapeJson(text)}","subtitleText":"${_escapeJson(subtitleText)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+    await _sendToUnity('Speak', json);
+  }
+
   // ─────────────────────────────────────────────
   // Internal
   // ─────────────────────────────────────────────
@@ -1058,17 +1200,41 @@ class AvatarScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // TTS 등에서 받은 오디오 데이터
-          final audioBytes = await getAudioFromTTS("안녕하세요");
-          avatarKey.currentState?.prepareAudio(
-            audioBytes,
-            'wav',
-            text: '안녕하세요',
-          );
-        },
-        child: const Icon(Icons.play_arrow),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 방법 1: 오디오 파일 기반 (PrepareAudio)
+          FloatingActionButton(
+            heroTag: 'audio',
+            onPressed: () async {
+              final audioBytes = await getAudioFromTTS("안녕하세요");
+              avatarKey.currentState?.prepareAudio(
+                audioBytes,
+                'wav',
+                text: '안녕하세요',
+              );
+            },
+            child: const Icon(Icons.audiotrack),
+          ),
+          const SizedBox(height: 8),
+          // 방법 2: Chat (LLM + TTS + 모션)
+          FloatingActionButton(
+            heroTag: 'chat',
+            onPressed: () {
+              avatarKey.currentState?.chat("오늘 날씨 어때?");
+            },
+            child: const Icon(Icons.chat),
+          ),
+          const SizedBox(height: 8),
+          // 방법 3: Speak (TTS + 모션, LLM 없음)
+          FloatingActionButton(
+            heroTag: 'speak',
+            onPressed: () {
+              avatarKey.currentState?.speak("안녕하세요, 반갑습니다.");
+            },
+            child: const Icon(Icons.record_voice_over),
+          ),
+        ],
       ),
     );
   }

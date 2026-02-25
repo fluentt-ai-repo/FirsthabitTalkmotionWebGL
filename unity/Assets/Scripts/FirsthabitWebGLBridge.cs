@@ -48,6 +48,23 @@ namespace Firsthabit.WebGL
         }
 
         [Serializable]
+        private class ChatRequest
+        {
+            public string text = "";
+            public bool prepareOnly = false;
+            public bool playAudio = true;
+        }
+
+        [Serializable]
+        private class SpeakRequest
+        {
+            public string text = "";
+            public string subtitleText = "";
+            public bool prepareOnly = false;
+            public bool playAudio = true;
+        }
+
+        [Serializable]
         private class CacheInfoResponse
         {
             public int count;
@@ -77,6 +94,8 @@ namespace Firsthabit.WebGL
         private Dictionary<string, GameObject> avatarPrefabMap;
         private string currentAvatarId;
         private GameObject currentAvatarInstance;
+        private HashSet<string> pendingAutoPlay = new HashSet<string>();
+        private Dictionary<string, bool> pendingPlayAudio = new Dictionary<string, bool>();
 
         #endregion
 
@@ -590,6 +609,101 @@ namespace Firsthabit.WebGL
             }
         }
 
+        /// <summary>
+        /// Start a chat conversation. Server uses LLM to generate response, then TTS + Motion.
+        /// JSON: { "text": "user message", "prepareOnly": false, "playAudio": true }
+        /// - prepareOnly=false (default): auto-plays after server processing. Fires onPrepared, then onPlaybackStarted.
+        /// - prepareOnly=true: only prepares. Use Play(cacheId) to play later. Fires onPrepared.
+        /// Callbacks: onRequestSent → onResponseReceived → onPrepared → [onPlaybackStarted → onSentence* → onPlaybackCompleted]
+        /// </summary>
+        public void Chat(string json)
+        {
+            try
+            {
+                var request = JsonUtility.FromJson<ChatRequest>(json);
+
+                if (string.IsNullOrEmpty(request.text))
+                {
+                    FH_OnError("Chat", "No text provided");
+                    return;
+                }
+
+                Log($"Chat: text={request.text}, prepareOnly={request.prepareOnly}, playAudio={request.playAudio}");
+
+                string cacheId = fluentTAvatar.PrepareChat(request.text);
+
+                if (string.IsNullOrEmpty(cacheId))
+                {
+                    FH_OnError("Chat", "PrepareChat returned null cacheId");
+                    return;
+                }
+
+                if (!request.prepareOnly)
+                {
+                    pendingAutoPlay.Add(cacheId);
+                    pendingPlayAudio[cacheId] = request.playAudio;
+                }
+
+                Log($"Chat: cacheId={cacheId}, prepareOnly={request.prepareOnly}");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("Chat", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Convert text to speech with motion. Server generates TTS audio + Motion (no LLM).
+        /// JSON: { "text": "text to speak", "subtitleText": "", "prepareOnly": false, "playAudio": true }
+        /// - subtitleText: optional separate subtitle text. If empty, uses text.
+        /// - prepareOnly=false (default): auto-plays after server processing.
+        /// - prepareOnly=true: only prepares. Use Play(cacheId) to play later.
+        /// Callbacks: onRequestSent → onResponseReceived → onPrepared → [onPlaybackStarted → onSentence* → onPlaybackCompleted]
+        /// </summary>
+        public void Speak(string json)
+        {
+            try
+            {
+                var request = JsonUtility.FromJson<SpeakRequest>(json);
+
+                if (string.IsNullOrEmpty(request.text))
+                {
+                    FH_OnError("Speak", "No text provided");
+                    return;
+                }
+
+                Log($"Speak: text={request.text}, subtitleText={request.subtitleText}, prepareOnly={request.prepareOnly}, playAudio={request.playAudio}");
+
+                string cacheId;
+                if (!string.IsNullOrEmpty(request.subtitleText))
+                {
+                    cacheId = fluentTAvatar.PrepareSpeak(request.text, request.subtitleText);
+                }
+                else
+                {
+                    cacheId = fluentTAvatar.PrepareSpeak(request.text);
+                }
+
+                if (string.IsNullOrEmpty(cacheId))
+                {
+                    FH_OnError("Speak", "PrepareSpeak returned null cacheId");
+                    return;
+                }
+
+                if (!request.prepareOnly)
+                {
+                    pendingAutoPlay.Add(cacheId);
+                    pendingPlayAudio[cacheId] = request.playAudio;
+                }
+
+                Log($"Speak: cacheId={cacheId}, prepareOnly={request.prepareOnly}");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("Speak", e.Message);
+            }
+        }
+
         #endregion
 
         #region Helper Methods
@@ -614,11 +728,40 @@ namespace Firsthabit.WebGL
         {
             Log($"Prepared: {cacheId}");
             FH_OnPrepared(cacheId);
+
+            // Auto-play if this was a direct play request (Chat/Speak without prepareOnly)
+            if (pendingAutoPlay.Contains(cacheId))
+            {
+                pendingAutoPlay.Remove(cacheId);
+                bool playAudio = true;
+                if (pendingPlayAudio.TryGetValue(cacheId, out bool pa))
+                {
+                    playAudio = pa;
+                    pendingPlayAudio.Remove(cacheId);
+                }
+
+                Log($"AutoPlay: cacheId={cacheId}, playAudio={playAudio}");
+                bool success = fluentTAvatar.PlayPrepared(cacheId, false, playAudio);
+                if (success)
+                {
+                    currentPlayingCacheId = cacheId;
+                    FH_OnPlaybackStarted(cacheId);
+                }
+                else
+                {
+                    FH_OnError("AutoPlay", $"PlayPrepared failed for cacheId: {cacheId}");
+                }
+            }
         }
 
         private void OnAvatarPrepareFailed(string cacheId, string error)
         {
             Log($"Prepare failed: {cacheId} - {error}");
+
+            // Clean up pending auto-play state if this was a Chat/Speak request
+            pendingAutoPlay.Remove(cacheId);
+            pendingPlayAudio.Remove(cacheId);
+
             FH_OnPrepareFailed(cacheId, error);
         }
 
