@@ -28,6 +28,9 @@
 - **코드 변경과 문서 업데이트는 같은 작업 브랜치에서 함께 수행해야 합니다.** 별도 브랜치를 만들지 마세요.
   - 작업 브랜치에서: 코드 수정 → CLAUDE.md 과제 목록 업데이트 → dev에 머지
 - **기능이 변경된 경우, 관련된 다른 문서(CLAUDE.md, FIREBASE_DEPLOY.md 등)도 함께 업데이트해야 합니다.**
+- **main merge + 버전 태그 생성 시, Unity 프로젝트 버전도 동일하게 업데이트해야 합니다.**
+  - `unity/ProjectSettings/ProjectSettings.asset` 파일의 `bundleVersion` 값을 태그 버전과 일치시킬 것
+  - Unity Editor에서: Edit → Project Settings → Player → Version 에서 변경 가능
 
 ### Unity .meta 파일
 - 새 파일/폴더 생성 시 반드시 `.meta` 파일 필요
