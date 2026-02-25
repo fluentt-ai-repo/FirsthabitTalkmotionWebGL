@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using FluentT.Avatar.SampleFloatingHead;
 using FluentT.Talkmotion;
 using FluentT.Talkmotion.Timeline.UnityTimeline;
+using TalkmotionTimelinePlayer = FluentT.Talkmotion.Timeline.Player.TalkmotionTimelinePlayer;
+using PlayerSubtitleEventData = FluentT.Talkmotion.Timeline.Player.SubtitleEventData;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -86,6 +88,20 @@ namespace Firsthabit.WebGL
             public string error;
         }
 
+        [Serializable]
+        private class TimelineAudioRequest
+        {
+            public string clipId;
+            public string format = "wav";
+        }
+
+        [Serializable]
+        private class PlayTimelineRequest
+        {
+            public bool playAudio = true;
+            public string cacheId;
+        }
+
         #endregion
 
         #region State
@@ -97,6 +113,9 @@ namespace Firsthabit.WebGL
         private HashSet<string> pendingAutoPlay = new HashSet<string>();
         private Dictionary<string, bool> pendingPlayAudio = new Dictionary<string, bool>();
         private bool pendingPlaybackStarted = false;
+        private TalkmotionTimelinePlayer timelinePlayer;
+        private string currentTimelineCacheId;
+        private bool timelineAudioMuted;
 
         #endregion
 
@@ -138,13 +157,25 @@ namespace Firsthabit.WebGL
             if (fluentTAvatar == null) return;
 
             RegisterCallbacks();
+            InitializeTimelinePlayer();
             FH_OnBridgeReady();
             Log("Bridge ready");
         }
 
         private void OnDestroy()
         {
+            CleanupTimelinePlayer();
             UnregisterCallbacks();
+        }
+
+        private void Update()
+        {
+            timelinePlayer?.Update(Time.deltaTime);
+        }
+
+        private void LateUpdate()
+        {
+            timelinePlayer?.LateUpdate(Time.deltaTime);
         }
 
         #endregion
@@ -524,6 +555,10 @@ namespace Firsthabit.WebGL
                 // Register callbacks on new avatar
                 RegisterCallbacks();
 
+                // Reinitialize timeline player for new avatar
+                CleanupTimelinePlayer();
+                InitializeTimelinePlayer();
+
                 Log($"ChangeAvatar: successfully changed to '{avatarId}'");
 
                 var successResponse = new AvatarChangedResponse
@@ -753,6 +788,273 @@ namespace Firsthabit.WebGL
                 "m4a" => AudioType.ACC,
                 _ => AudioType.UNKNOWN
             };
+        }
+
+        #endregion
+
+        #region Timeline Player
+
+        private void InitializeTimelinePlayer()
+        {
+            if (fluentTAvatar == null) return;
+
+            timelinePlayer = new TalkmotionTimelinePlayer();
+
+            var audioSource = fluentTAvatar.GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = fluentTAvatar.gameObject.AddComponent<AudioSource>();
+            }
+
+            timelinePlayer.Initialize(audioSource, fluentTAvatar.TMAnimationComponent);
+
+            // Register timeline events
+            timelinePlayer.OnPlaybackStarted += OnTimelinePlaybackStarted;
+            timelinePlayer.OnPlaybackCompleted += OnTimelinePlaybackCompleted;
+            timelinePlayer.OnSentenceStarted += OnTimelineSentenceStarted;
+            timelinePlayer.OnSentenceEnded += OnTimelineSentenceEnded;
+            timelinePlayer.OnSubtitleTextStarted += OnTimelineSubtitleStarted;
+            timelinePlayer.OnSubtitleTextEnded += OnTimelineSubtitleEnded;
+
+            Log("TimelinePlayer initialized");
+        }
+
+        private void CleanupTimelinePlayer()
+        {
+            if (timelinePlayer == null) return;
+
+            timelinePlayer.OnPlaybackStarted -= OnTimelinePlaybackStarted;
+            timelinePlayer.OnPlaybackCompleted -= OnTimelinePlaybackCompleted;
+            timelinePlayer.OnSentenceStarted -= OnTimelineSentenceStarted;
+            timelinePlayer.OnSentenceEnded -= OnTimelineSentenceEnded;
+            timelinePlayer.OnSubtitleTextStarted -= OnTimelineSubtitleStarted;
+            timelinePlayer.OnSubtitleTextEnded -= OnTimelineSubtitleEnded;
+
+            timelinePlayer.Stop();
+            timelinePlayer = null;
+            currentTimelineCacheId = null;
+
+            Log("TimelinePlayer cleaned up");
+        }
+
+        /// <summary>
+        /// Load timeline JSON data for direct playback.
+        /// Param: timeline JSON string from FluentT API.
+        /// </summary>
+        public void LoadTimeline(string json)
+        {
+            try
+            {
+                if (timelinePlayer == null)
+                {
+                    FH_OnError("LoadTimeline", "TimelinePlayer not initialized");
+                    return;
+                }
+
+                timelinePlayer.LoadTimeline(json);
+                Log($"LoadTimeline: loaded, duration={timelinePlayer.Duration:F2}s");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("LoadTimeline", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Load audio clip for timeline playback.
+        /// Reads base64 audio from JS (same pattern as PrepareAudio).
+        /// JSON: { "clipId": "clip-001", "format": "wav" }
+        /// Fires FH_OnPrepared(clipId) when loading is complete.
+        /// </summary>
+        public void LoadTimelineAudio(string json)
+        {
+            StartCoroutine(LoadTimelineAudioCoroutine(json));
+        }
+
+        private IEnumerator LoadTimelineAudioCoroutine(string json)
+        {
+            TimelineAudioRequest request;
+            try
+            {
+                request = JsonUtility.FromJson<TimelineAudioRequest>(json);
+            }
+            catch (Exception e)
+            {
+                FH_OnError("LoadTimelineAudio", $"Invalid JSON: {e.Message}");
+                yield break;
+            }
+
+            if (timelinePlayer == null)
+            {
+                FH_OnError("LoadTimelineAudio", "TimelinePlayer not initialized");
+                yield break;
+            }
+
+            if (string.IsNullOrEmpty(request.clipId))
+            {
+                FH_OnError("LoadTimelineAudio", "No clipId provided");
+                yield break;
+            }
+
+            // Create blob URL from pending audio base64
+            string blobUrl = FH_CreateAudioBlobUrl(request.format);
+            if (string.IsNullOrEmpty(blobUrl))
+            {
+                FH_OnError("LoadTimelineAudio", "No audio data pending");
+                yield break;
+            }
+
+            Log($"LoadTimelineAudio: loading clipId={request.clipId}, format={request.format}");
+
+            AudioType audioType = GetAudioType(request.format);
+
+            using (var www = UnityWebRequestMultimedia.GetAudioClip(blobUrl, audioType))
+            {
+                ((DownloadHandlerAudioClip)www.downloadHandler).streamAudio = false;
+
+                yield return www.SendWebRequest();
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    FH_RevokeAudioBlobUrl(blobUrl);
+                    FH_OnError("LoadTimelineAudio", $"Failed to load AudioClip: {www.error}");
+                    yield break;
+                }
+
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                if (clip == null)
+                {
+                    FH_RevokeAudioBlobUrl(blobUrl);
+                    FH_OnError("LoadTimelineAudio", "AudioClip creation returned null");
+                    yield break;
+                }
+
+                // Wait for audio data to fully decode (WebGL decodes async)
+                int waitFrames = 300;
+                while (clip.loadState != AudioDataLoadState.Loaded && waitFrames > 0)
+                {
+                    if (clip.loadState == AudioDataLoadState.Failed)
+                    {
+                        FH_RevokeAudioBlobUrl(blobUrl);
+                        FH_OnError("LoadTimelineAudio", "AudioClip decode failed");
+                        yield break;
+                    }
+                    yield return null;
+                    waitFrames--;
+                }
+
+                FH_RevokeAudioBlobUrl(blobUrl);
+
+                if (clip.loadState != AudioDataLoadState.Loaded)
+                {
+                    FH_OnError("LoadTimelineAudio", $"AudioClip decode timed out (state={clip.loadState})");
+                    yield break;
+                }
+
+                Log($"LoadTimelineAudio: AudioClip loaded - clipId={request.clipId}, length={clip.length:F2}s");
+
+                // Set audio clip on timeline player
+                var audioClips = new Dictionary<string, AudioClip>
+                {
+                    { request.clipId, clip }
+                };
+                timelinePlayer.SetAudioClips(audioClips);
+
+                FH_OnPrepared(request.clipId);
+            }
+        }
+
+        /// <summary>
+        /// Play the loaded timeline.
+        /// JSON: { "playAudio": true, "cacheId": "timeline-001" }
+        /// </summary>
+        public void PlayTimeline(string json)
+        {
+            try
+            {
+                var request = JsonUtility.FromJson<PlayTimelineRequest>(json);
+
+                if (timelinePlayer == null)
+                {
+                    FH_OnError("PlayTimeline", "TimelinePlayer not initialized");
+                    return;
+                }
+
+                if (!timelinePlayer.HasTimeline)
+                {
+                    FH_OnError("PlayTimeline", "No timeline loaded. Call LoadTimeline first");
+                    return;
+                }
+
+                currentTimelineCacheId = request.cacheId ?? "";
+
+                // Mute audio if playAudio is false
+                if (!request.playAudio)
+                {
+                    var audioSource = fluentTAvatar.GetComponent<AudioSource>();
+                    if (audioSource != null) audioSource.mute = true;
+                    timelineAudioMuted = true;
+                }
+
+                timelinePlayer.Play();
+                Log($"PlayTimeline: playing cacheId={currentTimelineCacheId}, playAudio={request.playAudio}");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("PlayTimeline", e.Message);
+            }
+        }
+
+        // Timeline event handlers
+
+        private void OnTimelinePlaybackStarted()
+        {
+            Log($"Timeline playback started: {currentTimelineCacheId}");
+            FH_OnPlaybackStarted(currentTimelineCacheId ?? "");
+        }
+
+        private void OnTimelinePlaybackCompleted()
+        {
+            // Restore audio if it was muted
+            if (timelineAudioMuted)
+            {
+                var audioSource = fluentTAvatar.GetComponent<AudioSource>();
+                if (audioSource != null) audioSource.mute = false;
+                timelineAudioMuted = false;
+            }
+
+            string completedId = currentTimelineCacheId ?? "";
+            currentTimelineCacheId = null;
+            Log($"Timeline playback completed: {completedId}");
+            FH_OnPlaybackCompleted(completedId);
+        }
+
+        private void OnTimelineSentenceStarted(TalkMotionData data)
+        {
+            string text = data?.text ?? "";
+            Log($"Timeline sentence started: {text}");
+            FH_OnSentenceStarted(text);
+        }
+
+        private void OnTimelineSentenceEnded(TalkMotionData data)
+        {
+            string text = data?.text ?? "";
+            Log($"Timeline sentence ended: {text}");
+            FH_OnSentenceEnded(text);
+        }
+
+        private void OnTimelineSubtitleStarted(PlayerSubtitleEventData data)
+        {
+            string text = data?.text ?? "";
+            Log($"Timeline subtitle started: {text}");
+            FH_OnSubtitleStarted(text);
+        }
+
+        private void OnTimelineSubtitleEnded(PlayerSubtitleEventData data)
+        {
+            string text = data?.text ?? "";
+            Log($"Timeline subtitle ended: {text}");
+            FH_OnSubtitleEnded(text);
         }
 
         #endregion
