@@ -53,6 +53,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
   final _scrollController = ScrollController();
   final _cacheIdController = TextEditingController();
   final _subtitleController = TextEditingController();
+  final _chatSpeakController = TextEditingController();
 
   String? _audioBase64;
   String _audioFormat = 'wav';
@@ -420,6 +421,7 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
     _scrollController.dispose();
     _cacheIdController.dispose();
     _subtitleController.dispose();
+    _chatSpeakController.dispose();
     super.dispose();
   }
 
@@ -703,6 +705,60 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                         },
                         icon: const Icon(Icons.delete_outline, size: 18),
                         label: const Text('Clear All'),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // --- Chat / Speak controls ---
+                const Divider(height: 16),
+                Text('Chat / Speak', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: _chatSpeakController,
+                  decoration: const InputDecoration(
+                    labelText: 'Text',
+                    hintText: 'Enter text for Chat or Speak',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                  maxLines: 2,
+                  minLines: 1,
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          final text = _chatSpeakController.text.trim();
+                          if (text.isEmpty) {
+                            _addLog('>> ERROR: No text entered.');
+                            return;
+                          }
+                          _bridge.chat(text, playAudio: _playAudio);
+                          _addLog('>> Chat: $text');
+                        },
+                        icon: const Icon(Icons.chat, size: 18),
+                        label: const Text('Chat'),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          final text = _chatSpeakController.text.trim();
+                          if (text.isEmpty) {
+                            _addLog('>> ERROR: No text entered.');
+                            return;
+                          }
+                          _bridge.speak(text, playAudio: _playAudio);
+                          _addLog('>> Speak: $text');
+                        },
+                        icon: const Icon(Icons.record_voice_over, size: 18),
+                        label: const Text('Speak'),
                       ),
                     ),
                   ],

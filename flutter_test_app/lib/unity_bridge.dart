@@ -163,6 +163,25 @@ class UnityBridge {
     _sendToUnity('GetAvatarList', '');
   }
 
+  /// Chat: send text to LLM → TTS → Motion.
+  /// [text] is the user message.
+  /// [prepareOnly] if true, only prepares (use play() later).
+  /// [playAudio] if false, motion only (no audio).
+  void chat(String text, {bool prepareOnly = false, bool playAudio = true}) {
+    final json = '{"text":"${_escapeJson(text)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+    _sendToUnity('Chat', json);
+  }
+
+  /// Speak: TTS → Motion (no LLM).
+  /// [text] is the text to speak.
+  /// [subtitleText] optional separate subtitle text.
+  /// [prepareOnly] if true, only prepares (use play() later).
+  /// [playAudio] if false, motion only (no audio).
+  void speak(String text, {String subtitleText = '', bool prepareOnly = false, bool playAudio = true}) {
+    final json = '{"text":"${_escapeJson(text)}","subtitleText":"${_escapeJson(subtitleText)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+    _sendToUnity('Speak', json);
+  }
+
   /// Set camera background color.
   /// [colorString] is "transparent" or hex like "#FF0000".
   void setBackgroundColor(String colorString) {

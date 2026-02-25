@@ -96,6 +96,7 @@ namespace Firsthabit.WebGL
         private GameObject currentAvatarInstance;
         private HashSet<string> pendingAutoPlay = new HashSet<string>();
         private Dictionary<string, bool> pendingPlayAudio = new Dictionary<string, bool>();
+        private bool pendingPlaybackStarted = false;
 
         #endregion
 
@@ -328,6 +329,7 @@ namespace Firsthabit.WebGL
                 if (success)
                 {
                     currentPlayingCacheId = request.cacheId;
+                    pendingPlaybackStarted = false;
                     FH_OnPlaybackStarted(request.cacheId);
                 }
                 else
@@ -350,6 +352,7 @@ namespace Firsthabit.WebGL
             {
                 fluentTAvatar.StopTalkMotion();
                 currentPlayingCacheId = null;
+                pendingPlaybackStarted = false;
                 Log("Stop called");
             }
             catch (Exception e)
@@ -612,9 +615,10 @@ namespace Firsthabit.WebGL
         /// <summary>
         /// Start a chat conversation. Server uses LLM to generate response, then TTS + Motion.
         /// JSON: { "text": "user message", "prepareOnly": false, "playAudio": true }
-        /// - prepareOnly=false (default): auto-plays after server processing. Fires onPrepared, then onPlaybackStarted.
-        /// - prepareOnly=true: only prepares. Use Play(cacheId) to play later. Fires onPrepared.
-        /// Callbacks: onRequestSent → onResponseReceived → onPrepared → [onPlaybackStarted → onSentence* → onPlaybackCompleted]
+        /// - prepareOnly=false (default): uses StartChat for direct streaming playback.
+        ///   Callbacks: onRequestSent → onResponseReceived → onPlaybackStarted → onSentence* → onPlaybackCompleted
+        /// - prepareOnly=true: only prepares. Use Play(cacheId) to play later.
+        ///   Callbacks: onRequestSent → onResponseReceived → onPrepared
         /// </summary>
         public void Chat(string json)
         {
@@ -630,21 +634,31 @@ namespace Firsthabit.WebGL
 
                 Log($"Chat: text={request.text}, prepareOnly={request.prepareOnly}, playAudio={request.playAudio}");
 
-                string cacheId = fluentTAvatar.PrepareChat(request.text);
-
-                if (string.IsNullOrEmpty(cacheId))
+                if (request.prepareOnly)
                 {
-                    FH_OnError("Chat", "PrepareChat returned null cacheId");
-                    return;
+                    // Prepare-only: cache for later playback via Play()
+                    string cacheId = fluentTAvatar.PrepareChat(request.text);
+                    if (string.IsNullOrEmpty(cacheId))
+                    {
+                        FH_OnError("Chat", "PrepareChat returned null cacheId");
+                        return;
+                    }
+                    Log($"Chat: prepared cacheId={cacheId}");
                 }
-
-                if (!request.prepareOnly)
+                else
                 {
-                    pendingAutoPlay.Add(cacheId);
-                    pendingPlayAudio[cacheId] = request.playAudio;
+                    // Direct play: use StartChat for streaming multi-sentence support
+                    var options = new TalkmotionOptions { playAudio = request.playAudio };
+                    TalkmotionID? requestId = fluentTAvatar.StartChat(request.text, options);
+                    if (!requestId.HasValue)
+                    {
+                        FH_OnError("Chat", "StartChat returned null requestId");
+                        return;
+                    }
+                    currentPlayingCacheId = requestId.Value.Value;
+                    pendingPlaybackStarted = true;
+                    Log($"Chat: started requestId={requestId.Value.Value}");
                 }
-
-                Log($"Chat: cacheId={cacheId}, prepareOnly={request.prepareOnly}");
             }
             catch (Exception e)
             {
@@ -656,9 +670,10 @@ namespace Firsthabit.WebGL
         /// Convert text to speech with motion. Server generates TTS audio + Motion (no LLM).
         /// JSON: { "text": "text to speak", "subtitleText": "", "prepareOnly": false, "playAudio": true }
         /// - subtitleText: optional separate subtitle text. If empty, uses text.
-        /// - prepareOnly=false (default): auto-plays after server processing.
+        /// - prepareOnly=false (default): uses StartSpeak for direct streaming playback.
+        ///   Callbacks: onRequestSent → onResponseReceived → onPlaybackStarted → onSentence* → onPlaybackCompleted
         /// - prepareOnly=true: only prepares. Use Play(cacheId) to play later.
-        /// Callbacks: onRequestSent → onResponseReceived → onPrepared → [onPlaybackStarted → onSentence* → onPlaybackCompleted]
+        ///   Callbacks: onRequestSent → onResponseReceived → onPrepared
         /// </summary>
         public void Speak(string json)
         {
@@ -674,29 +689,49 @@ namespace Firsthabit.WebGL
 
                 Log($"Speak: text={request.text}, subtitleText={request.subtitleText}, prepareOnly={request.prepareOnly}, playAudio={request.playAudio}");
 
-                string cacheId;
-                if (!string.IsNullOrEmpty(request.subtitleText))
+                if (request.prepareOnly)
                 {
-                    cacheId = fluentTAvatar.PrepareSpeak(request.text, request.subtitleText);
+                    // Prepare-only: cache for later playback via Play()
+                    string cacheId;
+                    if (!string.IsNullOrEmpty(request.subtitleText))
+                    {
+                        cacheId = fluentTAvatar.PrepareSpeak(request.text, request.subtitleText);
+                    }
+                    else
+                    {
+                        cacheId = fluentTAvatar.PrepareSpeak(request.text);
+                    }
+
+                    if (string.IsNullOrEmpty(cacheId))
+                    {
+                        FH_OnError("Speak", "PrepareSpeak returned null cacheId");
+                        return;
+                    }
+                    Log($"Speak: prepared cacheId={cacheId}");
                 }
                 else
                 {
-                    cacheId = fluentTAvatar.PrepareSpeak(request.text);
-                }
+                    // Direct play: use StartSpeak for streaming multi-sentence support
+                    var options = new TalkmotionOptions { playAudio = request.playAudio };
+                    TalkmotionID? requestId;
+                    if (!string.IsNullOrEmpty(request.subtitleText))
+                    {
+                        requestId = fluentTAvatar.StartSpeak(request.text, request.subtitleText, options);
+                    }
+                    else
+                    {
+                        requestId = fluentTAvatar.StartSpeak(request.text, options);
+                    }
 
-                if (string.IsNullOrEmpty(cacheId))
-                {
-                    FH_OnError("Speak", "PrepareSpeak returned null cacheId");
-                    return;
+                    if (!requestId.HasValue)
+                    {
+                        FH_OnError("Speak", "StartSpeak returned null requestId");
+                        return;
+                    }
+                    currentPlayingCacheId = requestId.Value.Value;
+                    pendingPlaybackStarted = true;
+                    Log($"Speak: started requestId={requestId.Value.Value}");
                 }
-
-                if (!request.prepareOnly)
-                {
-                    pendingAutoPlay.Add(cacheId);
-                    pendingPlayAudio[cacheId] = request.playAudio;
-                }
-
-                Log($"Speak: cacheId={cacheId}, prepareOnly={request.prepareOnly}");
             }
             catch (Exception e)
             {
@@ -768,17 +803,25 @@ namespace Firsthabit.WebGL
         private void OnAvatarSentenceStarted(TalkMotionData data)
         {
             string text = data?.text ?? "";
-            Log($"Sentence started: {text}");
+            Log($"Sentence started: {text} (isFirstSentence={data?.isFirstSentence})");
             FH_OnSentenceStarted(text);
+
+            // For direct play (StartSpeak/StartChat), fire PlaybackStarted on first sentence
+            if (data?.isFirstSentence == true && pendingPlaybackStarted)
+            {
+                pendingPlaybackStarted = false;
+                FH_OnPlaybackStarted(currentPlayingCacheId);
+            }
         }
 
         private void OnAvatarSentenceEnded(TalkMotionData data)
         {
             string text = data?.text ?? "";
-            Log($"Sentence ended: {text}");
+            Log($"Sentence ended: {text} (isLastSentence={data?.isLastSentence})");
             FH_OnSentenceEnded(text);
 
-            if (currentPlayingCacheId != null)
+            // Only trigger playback completed after the last sentence
+            if (currentPlayingCacheId != null && data != null && data.isLastSentence)
             {
                 StartCoroutine(CheckPlaybackCompleted());
             }
@@ -786,6 +829,7 @@ namespace Firsthabit.WebGL
 
         private IEnumerator CheckPlaybackCompleted()
         {
+            // Wait 2 frames for any remaining SDK processing
             yield return null;
             yield return null;
 
