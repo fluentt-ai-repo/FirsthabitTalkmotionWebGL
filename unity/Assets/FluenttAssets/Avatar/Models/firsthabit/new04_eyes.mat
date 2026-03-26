@@ -27,6 +27,7 @@ Material:
   m_ValidKeywords:
   - _NORMALINDEPTHNORMALPASS
   - _RECEIVEDECALS
+  - _RIMLIGHTING
   m_InvalidKeywords:
   - _SPECULAR_SETUP
   - _VERTEXNORMAL_ON
@@ -67,7 +68,7 @@ Material:
     - _Parallax: 0.02
     - _RimPower: 2
     - _SkinShadowSamplingBias: 0
-    - _Smoothness: 1
+    - _Smoothness: 0
     - _WorkflowMode: 0
     m_Colors:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
