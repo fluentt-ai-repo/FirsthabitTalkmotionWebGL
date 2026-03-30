@@ -940,58 +940,58 @@ MonoBehaviour:
         originalMesh: {fileID: 0}
     selectionData:
       positions:
-      - x: 0.13475472
+      - x: 0.13475466
         y: 0.35463378
         z: 0.009648385
-      - x: 0.13475472
+      - x: 0.13475466
         y: 0.3154357
         z: 0.0096483845
-      - x: 0.13475472
+      - x: 0.13475466
         y: 0.28002015
         z: 0.0096483845
-      - x: 0.13162063
+      - x: 0.13162065
         y: 0.35175538
         z: -0.08011263
-      - x: 0.13162063
+      - x: 0.13162065
         y: 0.32998383
         z: -0.08011263
-      - x: 0.13162063
+      - x: 0.13162065
         y: 0.30555943
         z: -0.08011263
-      - x: 0.13162063
+      - x: 0.13162065
         y: 0.28123644
         z: -0.08011263
-      - x: 0.009193517
+      - x: 0.00919342
         y: 0.34961703
         z: -0.15276298
-      - x: 0.009193517
+      - x: 0.00919342
         y: 0.32784548
         z: -0.15276298
-      - x: 0.009193517
+      - x: 0.00919342
         y: 0.3034211
         z: -0.15276298
-      - x: 0.009193517
+      - x: 0.00919342
         y: 0.27909812
         z: -0.15276298
-      - x: -0.13082926
+      - x: -0.13082933
         y: 0.35389242
         z: -0.082211405
-      - x: -0.13082926
+      - x: -0.13082933
         y: 0.33212087
         z: -0.082211405
-      - x: -0.13082926
+      - x: -0.13082933
         y: 0.30769646
         z: -0.082211405
-      - x: -0.13082926
+      - x: -0.13082933
         y: 0.28337348
         z: -0.082211405
-      - x: -0.13500744
+      - x: -0.13500738
         y: 0.35463378
         z: 0.030171257
-      - x: -0.13500744
+      - x: -0.13500738
         y: 0.31842786
         z: 0.030171257
-      - x: -0.13500744
+      - x: -0.13500738
         y: 0.2841869
         z: 0.030171257
       attributes:
@@ -1052,6 +1052,52 @@ MonoBehaviour:
   localInertiaProperty: 0
   windInfluenceProperty: 0
   blendWeightProperty: 0
+--- !u!1 &1520877237136950408
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5722330215299443017}
+  - component: {fileID: 8525866752898076197}
+  m_Layer: 0
+  m_Name: TargetTracking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5722330215299443017
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520877237136950408}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7609751376314294590}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8525866752898076197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520877237136950408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
+  m_Weight: 1
+  m_Effectors: []
 --- !u!1001 &7931399641059133141
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1062,7 +1108,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1078,15 +1124,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1127,6 +1173,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5722330215299443017}
     - targetCorrespondingSourceObject: {fileID: 4436805663696350335, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8996761241172607907}
@@ -2047,9 +2096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RigLayers:
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  - m_Rig: {fileID: 0}
+  - m_Rig: {fileID: 8525866752898076197}
     m_Active: 1
   m_Effectors: []
 --- !u!82 &1552901609685654477
@@ -2149,6 +2196,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!4 &7609751376314294590 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+  m_PrefabInstance: {fileID: 7931399641059133141}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8264774373426480124 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7159705867419663063, guid: a7cf97a15078595469ae2b26045c3345, type: 3}

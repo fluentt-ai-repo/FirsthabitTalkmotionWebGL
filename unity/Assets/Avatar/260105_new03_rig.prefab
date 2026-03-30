@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3572535350484684989
+--- !u!1 &4415307124918173976
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1701344657058745110}
-  - component: {fileID: 357257275761044482}
+  - component: {fileID: 2371463492015655458}
+  - component: {fileID: 3475778956381622933}
   m_Layer: 0
   m_Name: TargetTracking
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1701344657058745110
+--- !u!4 &2371463492015655458
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3572535350484684989}
+  m_GameObject: {fileID: 4415307124918173976}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,13 +32,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8425741763848520053}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &357257275761044482
+--- !u!114 &3475778956381622933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3572535350484684989}
+  m_GameObject: {fileID: 4415307124918173976}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
@@ -864,40 +864,40 @@ MonoBehaviour:
         originalMesh: {fileID: 0}
     selectionData:
       positions:
-      - x: 0.05512812
+      - x: 0.055128098
         y: 0.5249505
         z: 0.0890919
-      - x: 0.06384933
+      - x: 0.06384945
         y: 0.50730485
         z: 0.10965642
-      - x: 0.06835313
+      - x: 0.068353176
         y: 0.48488608
         z: 0.11925889
-      - x: 0.0706299
+      - x: 0.070629835
         y: 0.45875743
         z: 0.12463642
-      - x: -0.036377113
+      - x: -0.03637719
         y: 0.5249505
         z: 0.09483952
-      - x: -0.043853875
+      - x: -0.04385376
         y: 0.5072969
         z: 0.11540405
-      - x: -0.04789126
+      - x: -0.04789114
         y: 0.48841634
         z: 0.12500651
-      - x: -0.047891255
+      - x: -0.04789114
         y: 0.46195433
         z: 0.13057426
-      - x: 0.007142106
+      - x: 0.007142067
         y: 0.5249505
         z: 0.10749932
-      - x: 0.007142108
+      - x: 0.007142067
         y: 0.5072969
         z: 0.12806383
-      - x: 0.00714211
+      - x: 0.007142067
         y: 0.48487815
         z: 0.1376663
-      - x: 0.0071421135
+      - x: 0.007142067
         y: 0.45874956
         z: 0.14304383
       attributes:
@@ -913,7 +913,7 @@ MonoBehaviour:
       - Value: 2
       - Value: 2
       - Value: 2
-      maxConnectionDistance: 0.02846627
+      maxConnectionDistance: 0.028466312
       userEdit: 0
     preBuildData:
       enabled: 0
@@ -962,7 +962,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalPosition.y
@@ -978,15 +978,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1037,7 +1037,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1701344657058745110}
+      addedObject: {fileID: 2371463492015655458}
     - targetCorrespondingSourceObject: {fileID: 4436805663696350335, guid: 008f4d3846d7cde46859d75ea2711cee, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8731128149019587630}
@@ -1963,9 +1963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RigLayers:
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  - m_Rig: {fileID: 357257275761044482}
+  - m_Rig: {fileID: 3475778956381622933}
     m_Active: 1
   m_Effectors: []
 --- !u!82 &5708093830087457027

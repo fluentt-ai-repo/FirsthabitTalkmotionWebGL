@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "unity-mcp": {
+      "type": "stdio",
+      "command": "C:\\Users\\leecm\\.local\\bin\\uvx.exe",
+      "args": [
+        "--offline",
+        "--prerelease",
+        "explicit",
+        "--from",
+        "mcpforunityserver>=0.0.0a0",
+        "mcp-for-unity",
+        "--transport",
+        "stdio",
+        "--http-url",
+        "http://localhost:6400",
+        "--project-scoped-tools"
+      ]
+    }
+  }
+}

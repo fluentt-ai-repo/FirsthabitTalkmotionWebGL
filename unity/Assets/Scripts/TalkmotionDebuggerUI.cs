@@ -19,18 +19,12 @@ namespace Firsthabit.WebGL
         [Tooltip("Panel width in pixels")]
         [SerializeField] private float panelWidth = 220f;
 
-        [Tooltip("Enable keyboard shortcuts (A/D or Arrow keys for avatar, W/S for zoom)")]
-        [SerializeField] private bool enableKeyboardShortcuts = true;
-
         [Header("Camera Settings")]
         [Tooltip("Enable automatic camera tracking of selected avatar")]
         [SerializeField] private bool enableCameraTracking = true;
 
         [Tooltip("Camera offset from head bone")]
         [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 0f, 0.6f);
-
-        [Tooltip("Camera zoom speed")]
-        [SerializeField] private float zoomSpeed = 0.05f;
 
         [Tooltip("Camera follow smoothing")]
         [SerializeField] private float cameraSmoothSpeed = 5f;
@@ -53,7 +47,6 @@ namespace Firsthabit.WebGL
 
         // Camera
         private Camera mainCamera;
-        private float currentZoomOffset = 0f;
 
         // UI state
         private string inputText = "";
@@ -73,6 +66,18 @@ namespace Firsthabit.WebGL
         private GUIStyle panelStyle;
         private bool stylesInitialized;
 
+        // Editor accessors
+        public FluentTAvatar[] Avatars => avatars;
+        public int SelectedAvatarIndex => selectedAvatarIndex;
+        public FluentTAvatar SelectedAvatar => selectedAvatar;
+
+        public void EditorSelectAvatar(int index) => SelectAvatar(index);
+        public void EditorRefreshAvatarList()
+        {
+            RefreshAvatarList();
+            if (avatars != null && avatars.Length > 0) SelectAvatar(0);
+        }
+
         #endregion
 
         #region Lifecycle
@@ -89,39 +94,6 @@ namespace Firsthabit.WebGL
             inputText = speakText;
         }
 
-        private void Update()
-        {
-            if (!enableKeyboardShortcuts) return;
-
-            // Toggle UI
-            if (Input.GetKeyDown(KeyCode.F1))
-            {
-                showUI = !showUI;
-            }
-
-            if (!showUI) return;
-
-            // Avatar navigation: A/D or Left/Right
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                SelectAvatar(selectedAvatarIndex - 1);
-            }
-            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                SelectAvatar(selectedAvatarIndex + 1);
-            }
-
-            // Zoom: W/S or Up/Down
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
-                currentZoomOffset -= zoomSpeed * Time.deltaTime;
-            }
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
-                currentZoomOffset += zoomSpeed * Time.deltaTime;
-            }
-        }
-
         private void LateUpdate()
         {
             if (!enableCameraTracking || mainCamera == null || selectedAvatar == null) return;
@@ -129,13 +101,13 @@ namespace Firsthabit.WebGL
             var headBone = FindHeadBone(selectedAvatar.transform);
             if (headBone == null) return;
 
-            var targetPos = headBone.position + headBone.forward * (cameraOffset.z + currentZoomOffset)
+            var targetPos = headBone.position + headBone.forward * cameraOffset.z
                                                + headBone.up * cameraOffset.y
                                                + headBone.right * cameraOffset.x;
 
-            mainCamera.transform.position = Vector3.Lerp(
-                mainCamera.transform.position, targetPos, cameraSmoothSpeed * Time.deltaTime);
-            mainCamera.transform.LookAt(headBone.position);
+            var currentPos = mainCamera.transform.position;
+            float targetX = Mathf.Lerp(currentPos.x, targetPos.x, cameraSmoothSpeed * Time.deltaTime);
+            mainCamera.transform.position = new Vector3(targetX, currentPos.y, currentPos.z);
         }
 
         private void OnDestroy()
@@ -356,7 +328,6 @@ namespace Firsthabit.WebGL
 
             // Title
             GUILayout.Label("TalkMotion Debugger", headerStyle);
-            GUILayout.Label("(F1 to toggle)", GUI.skin.label);
             GUILayout.Space(4);
 
             DrawAvatarSelector();

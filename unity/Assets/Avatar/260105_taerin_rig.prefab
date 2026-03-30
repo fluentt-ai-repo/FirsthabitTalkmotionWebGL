@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &755838617890673700
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8185167841476233603}
+  - component: {fileID: 1297296243437391391}
+  m_Layer: 0
+  m_Name: TargetTracking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8185167841476233603
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755838617890673700}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2566684090590509133}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1297296243437391391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755838617890673700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
+  m_Weight: 1
+  m_Effectors: []
 --- !u!1 &8360399777827467346
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,7 +1228,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1198,15 +1244,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1255,6 +1301,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8185167841476233603}
     - targetCorrespondingSourceObject: {fileID: 4436805663696350335, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3408557729334736753}
@@ -1311,6 +1360,11 @@ Transform:
 --- !u!4 &1839364033459368921 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4436805663696350335, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
+  m_PrefabInstance: {fileID: 2599712684420521894}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2566684090590509133 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ea83ca4c524964a4ea019401ef1f5dcf, type: 3}
   m_PrefabInstance: {fileID: 2599712684420521894}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2942364825859875575 stripped
@@ -2160,9 +2214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RigLayers:
-  - m_Rig: {fileID: 0}
-    m_Active: 1
-  - m_Rig: {fileID: 0}
+  - m_Rig: {fileID: 1297296243437391391}
     m_Active: 1
   m_Effectors: []
 --- !u!82 &7390724616432216092

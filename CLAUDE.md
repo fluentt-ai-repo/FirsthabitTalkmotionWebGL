@@ -133,6 +133,11 @@ git push origin --delete feat/기능명     # 원격 삭제
 - Unity WebGL은 iframe으로 Flutter에 임베딩
 - **중요**: jslib에서 `window.parent` 사용 (Unity는 iframe 안에서 실행)
 
+## 로컬 실행
+- Flutter 테스트 앱 로컬 실행: `cd flutter_test_app && flutter run -d chrome`
+- Unity WebGL 빌드 파일이 `flutter_test_app/web/unity_webgl/`에 있어야 함
+- Unity 재빌드 후에는 `flutter clean` 필요 (빌드 캐시가 이전 파일을 재사용하므로)
+
 ## 배포
 - Firebase Hosting 사용 → 상세 가이드: [FIREBASE_DEPLOY.md](./FIREBASE_DEPLOY.md)
 - **배포 URL**: https://firsthabittalkmotionwebgl.web.app

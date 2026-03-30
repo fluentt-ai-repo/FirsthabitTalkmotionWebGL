@@ -21,6 +21,7 @@ namespace Firsthabit.WebGL
 
         [Header("Avatar Management")]
         [SerializeField] private AvatarEntry[] avatarEntries;
+        [SerializeField] private string editorTestAvatarId;
 
         #endregion
 
@@ -98,6 +99,14 @@ namespace Firsthabit.WebGL
         private Dictionary<string, bool> pendingPlayAudio = new Dictionary<string, bool>();
         private bool pendingPlaybackStarted = false;
 
+        // Editor read-only accessors
+        public FluentTAvatar CurrentFluentTAvatar => fluentTAvatar;
+        public string CurrentAvatarId => currentAvatarId;
+        public GameObject CurrentAvatarInstance => currentAvatarInstance;
+        public int AvatarPrefabCount => avatarPrefabMap?.Count ?? 0;
+        public string[] AvailableAvatarIds => avatarPrefabMap != null
+            ? new List<string>(avatarPrefabMap.Keys).ToArray() : Array.Empty<string>();
+
         #endregion
 
         #region Unity Lifecycle
@@ -118,26 +127,30 @@ namespace Firsthabit.WebGL
                 Log($"Avatar prefab map built: {avatarPrefabMap.Count} entries");
             }
 
+            // If avatar is already assigned in Inspector or exists in scene, use it
             if (fluentTAvatar == null)
             {
                 fluentTAvatar = FindAnyObjectByType<FluentTAvatar>();
-                if (fluentTAvatar == null)
-                {
-                    LogError("Awake", "FluentTAvatar not found in scene");
-                    return;
-                }
-                Log($"FluentTAvatar auto-found: {fluentTAvatar.name}");
             }
 
-            // Track the initial avatar instance
-            currentAvatarInstance = fluentTAvatar.gameObject;
+            if (fluentTAvatar != null)
+            {
+                currentAvatarInstance = fluentTAvatar.gameObject;
+                Log($"FluentTAvatar found: {fluentTAvatar.name}");
+            }
+            else
+            {
+                Log("No FluentTAvatar in scene. Waiting for external avatar creation.");
+            }
         }
 
         private void Start()
         {
-            if (fluentTAvatar == null) return;
+            if (fluentTAvatar != null)
+            {
+                RegisterCallbacks();
+            }
 
-            RegisterCallbacks();
             FH_OnBridgeReady();
             Log("Bridge ready");
         }
@@ -464,12 +477,13 @@ namespace Firsthabit.WebGL
 
                 Log($"ChangeAvatar: switching from '{currentAvatarId}' to '{avatarId}'");
 
-                // Unregister callbacks first (before SDK state changes)
-                UnregisterCallbacks();
-
-                // Stop playback and clear cache
-                fluentTAvatar.StopTalkMotion();
-                fluentTAvatar.ClearCache(null);
+                // Unregister callbacks and stop current avatar (if exists)
+                if (fluentTAvatar != null)
+                {
+                    UnregisterCallbacks();
+                    fluentTAvatar.StopTalkMotion();
+                    fluentTAvatar.ClearCache(null);
+                }
                 currentPlayingCacheId = null;
 
                 // Save transform of current avatar
