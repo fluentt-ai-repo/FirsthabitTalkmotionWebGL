@@ -19,17 +19,7 @@ namespace Firsthabit.WebGL
         [Tooltip("Panel width in pixels")]
         [SerializeField] private float panelWidth = 220f;
 
-        [Header("Camera Settings")]
-        [Tooltip("Enable automatic camera tracking of selected avatar")]
-        [SerializeField] private bool enableCameraTracking = true;
-
-        [Tooltip("Camera offset from head bone")]
-        [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 0f, 0.6f);
-
-        [Tooltip("Camera follow smoothing")]
-        [SerializeField] private float cameraSmoothSpeed = 5f;
-
-        [Header("API Test Defaults")]
+[Header("API Test Defaults")]
         [SerializeField] private string speakText = "이것은 음성 합성 테스트입니다.";
 
         [Header("Log Settings")]
@@ -45,8 +35,6 @@ namespace Firsthabit.WebGL
         private int selectedAvatarIndex = 0;
         private FluentTAvatar selectedAvatar;
 
-        // Camera
-        private Camera mainCamera;
 
         // UI state
         private string inputText = "";
@@ -82,6 +70,8 @@ namespace Firsthabit.WebGL
 
         #region Lifecycle
 
+        private Camera mainCamera;
+
         private void Start()
         {
             mainCamera = Camera.main;
@@ -94,23 +84,7 @@ namespace Firsthabit.WebGL
             inputText = speakText;
         }
 
-        private void LateUpdate()
-        {
-            if (!enableCameraTracking || mainCamera == null || selectedAvatar == null) return;
-
-            var headBone = FindHeadBone(selectedAvatar.transform);
-            if (headBone == null) return;
-
-            var targetPos = headBone.position + headBone.forward * cameraOffset.z
-                                               + headBone.up * cameraOffset.y
-                                               + headBone.right * cameraOffset.x;
-
-            var currentPos = mainCamera.transform.position;
-            float targetX = Mathf.Lerp(currentPos.x, targetPos.x, cameraSmoothSpeed * Time.deltaTime);
-            mainCamera.transform.position = new Vector3(targetX, currentPos.y, currentPos.z);
-        }
-
-        private void OnDestroy()
+private void OnDestroy()
         {
             UnregisterCallbacks();
         }
@@ -154,30 +128,18 @@ namespace Firsthabit.WebGL
             selectedAvatarIndex = index;
             selectedAvatar = avatars[selectedAvatarIndex];
 
+            // Move camera X to avatar root position
+            if (mainCamera != null)
+            {
+                var camPos = mainCamera.transform.position;
+                mainCamera.transform.position = new Vector3(
+                    selectedAvatar.transform.position.x, camPos.y, camPos.z);
+            }
+
             // Re-register callbacks
             RegisterCallbacks(selectedAvatar);
 
             AddLog($"Selected: {selectedAvatar.gameObject.name}");
-        }
-
-        private Transform FindHeadBone(Transform root)
-        {
-            var animator = root.GetComponent<Animator>();
-            if (animator != null && animator.isHuman)
-            {
-                var head = animator.GetBoneTransform(HumanBodyBones.Head);
-                if (head != null) return head;
-            }
-
-            // Fallback: search by name
-            foreach (var t in root.GetComponentsInChildren<Transform>())
-            {
-                var name = t.name.ToLower();
-                if (name.Contains("head") && !name.Contains("headtop"))
-                    return t;
-            }
-
-            return root;
         }
 
         #endregion

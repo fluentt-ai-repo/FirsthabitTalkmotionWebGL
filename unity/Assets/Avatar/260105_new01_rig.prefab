@@ -817,40 +817,40 @@ MonoBehaviour:
         originalMesh: {fileID: 0}
     selectionData:
       positions:
-      - x: 0.036224127
+      - x: 0.036224246
         y: 0.5607249
         z: 0.13732451
-      - x: 0.05850458
+      - x: 0.0585047
         y: 0.53548574
         z: 0.14165378
-      - x: 0.06984854
+      - x: 0.06984842
         y: 0.5100791
         z: 0.14457029
-      - x: 0.072267056
+      - x: 0.07226694
         y: 0.48559156
         z: 0.14692122
-      - x: 0.06805134
+      - x: 0.06805146
         y: 0.45853803
         z: 0.1490115
       - x: 0.060088396
         y: 0.43248218
         z: 0.14958905
-      - x: -0.036224365
+      - x: -0.036224246
         y: 0.5607249
         z: 0.13732451
-      - x: -0.05850458
+      - x: -0.0585047
         y: 0.53548574
         z: 0.14165378
-      - x: -0.06984854
+      - x: -0.06984842
         y: 0.5100791
         z: 0.14457029
-      - x: -0.072267056
+      - x: -0.07226694
         y: 0.48559156
         z: 0.14692122
       - x: -0.06805134
         y: 0.45853803
         z: 0.1490115
-      - x: -0.060088634
+      - x: -0.060088396
         y: 0.43248218
         z: 0.14958905
       attributes:
@@ -1003,6 +1003,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8099796121402191226, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3f7a2dc5c3cfca2479eaad766a009179, type: 2}
     - target: {fileID: 919132149155446097, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
       propertyPath: m_Name
       value: 260105_new01_rig
@@ -1012,12 +1016,20 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[20]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[21]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[63]'
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[64]'
-      value: 62.4
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7859194215858240645, guid: 268561629fc2f7f4b91806f81c2bd54a, type: 3}
       propertyPath: m_RenderingLayerMask

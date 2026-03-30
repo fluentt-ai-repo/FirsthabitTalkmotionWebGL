@@ -657,8 +657,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
-  far clip plane: 1.8
+  near clip plane: 0.8
+  far clip plane: 1.6
   field of view: 24
   orthographic: 0
   orthographic size: 5
@@ -996,10 +996,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 134388268}
     m_Modifications:
-    - target: {fileID: 1295546986555192437, guid: 8333f254b1cd7d240850e195529e0eea, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 3f7a2dc5c3cfca2479eaad766a009179, type: 2}
     - target: {fileID: 1345558796633791394, guid: 8333f254b1cd7d240850e195529e0eea, type: 3}
       propertyPath: m_Name
       value: 260105_new01_rig
@@ -1320,9 +1316,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Firsthabit.WebGL.TalkmotionDebuggerUI
   panelWidth: 220
-  enableCameraTracking: 1
-  cameraOffset: {x: 0, y: 0.43, z: 1.2}
-  cameraSmoothSpeed: 5
   speakText: "\uC774\uAC83\uC740 \uC911\uC694\uD55C \uD575\uC2EC \uD3EC\uC778\uD2B8\uC785\uB2C8\uB2E4."
   maxLogEntries: 50
 --- !u!4 &1780731806
@@ -1418,10 +1411,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 134388268}
     m_Modifications:
-    - target: {fileID: -6304910051797891577, guid: 6f79c7d9cc870424a9367883950f3275, type: 3}
-      propertyPath: useBaseFaceClip
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 279676593085248200, guid: 6f79c7d9cc870424a9367883950f3275, type: 3}
       propertyPath: m_Name
       value: 260105_new02_rig

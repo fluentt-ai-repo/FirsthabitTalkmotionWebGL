@@ -945,16 +945,16 @@ MonoBehaviour:
         originalMesh: {fileID: 0}
     selectionData:
       positions:
-      - x: 0.0044614077
+      - x: 0.0044612885
         y: 0.51539314
         z: 0.10610108
-      - x: 0.0024251342
+      - x: 0.0024251938
         y: 0.5372826
         z: 0.12343262
       - x: -0.0048713684
         y: 0.5598508
         z: 0.13313113
-      - x: -0.014043927
+      - x: -0.014043808
         y: 0.57350093
         z: 0.13826859
       - x: 0.07360363
@@ -963,22 +963,22 @@ MonoBehaviour:
       - x: 0.06056547
         y: 0.56323826
         z: 0.08386689
-      - x: 0.04821974
+      - x: 0.04821968
         y: 0.5821684
         z: 0.09210671
-      - x: 0.03710854
+      - x: 0.03710842
         y: 0.5957488
         z: 0.09631884
       - x: -0.0028905869
         y: 0.5675901
         z: 0.08775378
-      - x: -0.008728743
+      - x: -0.008728981
         y: 0.5912645
         z: 0.08790353
-      - x: -0.016812444
+      - x: -0.016812325
         y: 0.61027604
         z: 0.08463263
-      - x: -0.025282621
+      - x: -0.025282383
         y: 0.6302924
         z: 0.07922367
       - x: -0.04770851
@@ -987,10 +987,10 @@ MonoBehaviour:
       - x: -0.05336237
         y: 0.5815984
         z: 0.09994557
-      - x: -0.06247127
+      - x: -0.06247139
         y: 0.6029574
         z: 0.101028025
-      - x: -0.07252252
+      - x: -0.07252264
         y: 0.62395865
         z: 0.09984264
       attributes:
@@ -1118,12 +1118,36 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[2]'
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[5]'
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[20]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[21]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[24]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[25]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[63]'
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: 6ff746b8a601e114e9a2c7ce6d8e7a95, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[64]'
-      value: 60
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

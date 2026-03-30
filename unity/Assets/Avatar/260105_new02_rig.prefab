@@ -830,16 +830,16 @@ MonoBehaviour:
       - x: 0.13162065
         y: 0.28123644
         z: -0.08086957
-      - x: 0.00919342
+      - x: 0.00919354
         y: 0.34961703
         z: -0.15351993
-      - x: 0.00919342
+      - x: 0.00919354
         y: 0.32784548
         z: -0.15351993
-      - x: 0.00919342
+      - x: 0.00919354
         y: 0.3034211
         z: -0.15351993
-      - x: 0.00919342
+      - x: 0.00919354
         y: 0.27909812
         z: -0.15351993
       - x: -0.13082933
@@ -1023,6 +1023,14 @@ PrefabInstance:
     - target: {fileID: 3108678776676352288, guid: e1f56976b3de5d940aff8cebb511e03c, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[5]'
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: e1f56976b3de5d940aff8cebb511e03c, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[20]'
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3108678776676352288, guid: e1f56976b3de5d940aff8cebb511e03c, type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[21]'
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: e1f56976b3de5d940aff8cebb511e03c, type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[63]'
