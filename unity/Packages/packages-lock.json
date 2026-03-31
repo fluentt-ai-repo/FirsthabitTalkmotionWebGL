@@ -8,7 +8,7 @@
         "com.unity.nuget.newtonsoft-json": "3.0.2",
         "com.unity.test-framework": "1.1.31"
       },
-      "hash": "6907badefdea468892329ccee89402d7a989ae62"
+      "hash": "0f0eacf1821524c02d95a6cc909a3ed322560deb"
     },
     "com.fluentt.avatar-controller-sample-floating-head": {
       "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git",
@@ -17,7 +17,7 @@
       "dependencies": {
         "com.fluentt.talkmotion": "0.1.0"
       },
-      "hash": "17ab935485972c33c29bc110abad0b6d0f79c396"
+      "hash": "5fa3d6dc493bd3af5800f0c63f207a303d0ccfe0"
     },
     "com.fluentt.talkmotion": {
       "version": "https://github.com/Fluentt-ai/talkmotion-sdk.git",
@@ -27,7 +27,7 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.timeline": "1.8.9"
       },
-      "hash": "fcf382e754ca77278d051586a788e73a6dd89e95"
+      "hash": "0d2afc70727bbe17e02d3c64a627ff9f674c5365"
     },
     "com.unity.animation.rigging": {
       "version": "1.4.1",
@@ -41,7 +41,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
-      "version": "1.8.28",
+      "version": "1.8.29",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -75,15 +75,6 @@
       "source": "registry",
       "dependencies": {
         "com.unity.test-framework": "1.1.33"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.inputsystem": {
-      "version": "1.14.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.modules.uielements": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -177,7 +168,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.10",
+      "version": "1.8.12",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -198,7 +189,7 @@
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.9.10",
+      "version": "1.9.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {

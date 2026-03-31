@@ -1495,7 +1495,7 @@ MonoBehaviour:
   avatar: {fileID: -7543095845987390313}
   animatorController: {fileID: 9100000, guid: b792cf61491357a4185f3060f1f54cf7, type: 2}
   idleAnimations:
-  - clip: {fileID: 7400000, guid: cdcc190c4732c7745b4ce417e86eb070, type: 2}
+  - clip: {fileID: 7400000, guid: b4abf755c0afaa5498b28e04dfae863d, type: 2}
     weight: 1
     preventRepeat: 0
   defaultIdleAnimationClip: {fileID: 7400000, guid: cdcc190c4732c7745b4ce417e86eb070, type: 2}
