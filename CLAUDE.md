@@ -155,6 +155,7 @@ git push origin --delete feat/기능명     # 원격 삭제
 ### 기능
 - [ ] **Queue 모드 조정** - 현재 queue 모드가 기본값. Flutter에서 queue/interrupt 모드를 선택할 수 있도록 브릿지에 설정 메서드 추가
 - [ ] **Idle 모션 다양화** - idle 모션이 단일 반복이 아닌 여러 idle 애니메이션이 랜덤/순차 재생되도록 개선
+- [ ] **모션 트리거 기능** - 외부에서 특정 모션(생각중, 듣는 중, 기타)을 트리거하여 재생할 수 있는 브릿지 메서드 구현
 - [x] **투명 배경 / 컬러 조정** - `SetBackgroundColor` 메서드로 구현 완료 (transparent / hex color)
 - [x] **아바타 런타임 교체** - `ChangeAvatar(avatarId)` / `GetAvatarList()` 메서드로 10개 프리팹 중 선택 교체 구현 완료
 - [x] **자막 텍스트 전달** - `PrepareAudio`에 text 파라미터 추가, 클라이언트 감정 태깅 연동 완료
@@ -163,4 +164,7 @@ git push origin --delete feat/기능명     # 원격 삭제
 - [x] **콜백 등록 확인** - 기존 16개 콜백의 구독/해제/수정은 자유. 새 콜백 타입 추가는 jslib+C# 수정 필요하나 허용 가능 수준으로 판단
 - [ ] **WebGL 빌드파일 호환성 확인** - Flutter 프로젝트에서 WebGL 빌드 사용 시 문제 없는지 확인 (압축, 경로, CORS, MIME 타입 등)
 - [ ] **WebGL 빌드 용량 체크** - 빌드 결과물 크기 점검. 불필요한 에셋, 미사용 패키지 등 용량 줄일 수 있는 부분 확인
-- [ ] **렌더링/빛 셋팅 일치 확인** - 퍼스트해빗 편집툴의 렌더링 및 라이팅 설정과 완전히 일치하는지 비교 검증
+- [x] **렌더링/빛 셋팅 일치 확인** - GlobalVolume Profile 적용으로 WebGL과 Editor 렌더링 일치 완료
+
+### 최적화 (선택)
+- [ ] **Addressable 에셋 전환** - 웹 배포 용량 최소화를 위해 아바타 에셋을 Addressable로 전환. 발주처 웹 전환 결정에 따른 필수 최적화

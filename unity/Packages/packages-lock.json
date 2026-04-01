@@ -17,7 +17,7 @@
       "dependencies": {
         "com.fluentt.talkmotion": "0.1.0"
       },
-      "hash": "5fa3d6dc493bd3af5800f0c63f207a303d0ccfe0"
+      "hash": "32b003a8a509f9d8aaa741625eb5ab0a36840400"
     },
     "com.fluentt.talkmotion": {
       "version": "https://github.com/Fluentt-ai/talkmotion-sdk.git",
@@ -27,7 +27,7 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.timeline": "1.8.9"
       },
-      "hash": "0d2afc70727bbe17e02d3c64a627ff9f674c5365"
+      "hash": "2b94862b2c7d5a189f601060adce240d635894a7"
     },
     "com.unity.animation.rigging": {
       "version": "1.4.1",

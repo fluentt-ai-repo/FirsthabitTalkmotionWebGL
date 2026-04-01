@@ -1070,10 +1070,7 @@ MonoBehaviour:
     onListeningStateChanged:
       m_PersistentCalls:
         m_Calls: []
-  head_skmr:
-  - {fileID: 198161302293832274}
-  - {fileID: 8414183274383219818}
-  - {fileID: 8421669048602096909}
+  headSkmr: []
   faceBlendShapeList: []
   clipFaceBase:
     name: FaceBase
@@ -1688,6 +1685,14 @@ MonoBehaviour:
     - {fileID: 7400000, guid: f3f63d4ad31a3254a9cca48e6f949ef8, type: 2}
     - {fileID: 7400000, guid: 5d5b3b074fb622a48950ce13369e2347, type: 2}
     blendWeight: 1
+  oneShotMotions: []
+  oneShotMotionGroups: []
+  onOneShotMotionStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onOneShotMotionEnded:
+    m_PersistentCalls:
+      m_Calls: []
   enableEyeBlink: 1
   blinkClip:
     name: DefaultEyeBlink
@@ -1770,10 +1775,10 @@ MonoBehaviour:
         l: 0
         blendWeight: 1
     repeat: 0
-  blinkBlendMode: 0
+  blinkBlendMode: 2
   blinkInterval: 3
   blinkIntervalVariance: 1
-  head_skmr:
+  headSkinnedMeshRenderers:
   - {fileID: 198161302293832274}
   - {fileID: 8414183274383219818}
   - {fileID: 8421669048602096909}
@@ -1785,42 +1790,42 @@ MonoBehaviour:
   eyeBlendShapes:
     globalScale: 6
     eyeLookUpLeftIdx:
-    - skmr: {fileID: 198161302293832274}
+    - skinnedMeshRenderer: {fileID: 198161302293832274}
       blendShapeName: eyeLookUpLeft
       blendShapeIdx: 3
       scale: 1
     eyeLookDownLeftIdx:
-    - skmr: {fileID: 198161302293832274}
+    - skinnedMeshRenderer: {fileID: 198161302293832274}
       blendShapeName: eyeLookDownLeft
       blendShapeIdx: 0
       scale: 1
     eyeLookInLeftIdx:
-    - skmr: {fileID: 198161302293832274}
+    - skinnedMeshRenderer: {fileID: 198161302293832274}
       blendShapeName: eyeLookInLeft
       blendShapeIdx: 1
       scale: 1
     eyeLookOutLeftIdx:
-    - skmr: {fileID: 198161302293832274}
+    - skinnedMeshRenderer: {fileID: 198161302293832274}
       blendShapeName: eyeLookOutLeft
       blendShapeIdx: 2
       scale: 1
     eyeLookUpRightIdx:
-    - skmr: {fileID: 8414183274383219818}
+    - skinnedMeshRenderer: {fileID: 8414183274383219818}
       blendShapeName: eyeLookUpRight
       blendShapeIdx: 3
       scale: 1
     eyeLookDownRightIdx:
-    - skmr: {fileID: 8414183274383219818}
+    - skinnedMeshRenderer: {fileID: 8414183274383219818}
       blendShapeName: eyeLookDownRight
       blendShapeIdx: 0
       scale: 1
     eyeLookInRightIdx:
-    - skmr: {fileID: 8414183274383219818}
+    - skinnedMeshRenderer: {fileID: 8414183274383219818}
       blendShapeName: eyeLookInRight
       blendShapeIdx: 1
       scale: 1
     eyeLookOutRightIdx:
-    - skmr: {fileID: 8414183274383219818}
+    - skinnedMeshRenderer: {fileID: 8414183274383219818}
       blendShapeName: eyeLookOutRight
       blendShapeIdx: 2
       scale: 1
