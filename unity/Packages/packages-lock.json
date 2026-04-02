@@ -11,23 +11,23 @@
       "hash": "0f0eacf1821524c02d95a6cc909a3ed322560deb"
     },
     "com.fluentt.avatar-controller-sample-floating-head": {
-      "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git",
+      "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git#feat/idle-override-eye-control",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.fluentt.talkmotion": "0.1.0"
       },
-      "hash": "32b003a8a509f9d8aaa741625eb5ab0a36840400"
+      "hash": "b4464ff25d62753049d8e006f7e9d1e6c073b6fa"
     },
     "com.fluentt.talkmotion": {
-      "version": "https://github.com/Fluentt-ai/talkmotion-sdk.git",
+      "version": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git#feat/base-expression",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.timeline": "1.8.9"
       },
-      "hash": "2b94862b2c7d5a189f601060adce240d635894a7"
+      "hash": "ed7dc014fd48ea7ca75b4764d9db152ce773ad6e"
     },
     "com.unity.animation.rigging": {
       "version": "1.4.1",
