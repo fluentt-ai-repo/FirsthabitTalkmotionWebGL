@@ -10,7 +10,7 @@ namespace Firsthabit.WebGL
         // Serialized properties
         private SerializedProperty fluentTAvatarProp;
         private SerializedProperty enableLoggingProp;
-        private SerializedProperty avatarEntriesProp;
+        private SerializedProperty avatarCatalogProp;
         private SerializedProperty editorTestAvatarIdProp;
 
         // Foldout states
@@ -28,7 +28,7 @@ namespace Firsthabit.WebGL
         {
             fluentTAvatarProp = serializedObject.FindProperty("fluentTAvatar");
             enableLoggingProp = serializedObject.FindProperty("enableLogging");
-            avatarEntriesProp = serializedObject.FindProperty("avatarEntries");
+            avatarCatalogProp = serializedObject.FindProperty("avatarCatalog");
             editorTestAvatarIdProp = serializedObject.FindProperty("editorTestAvatarId");
         }
 
@@ -115,13 +115,19 @@ namespace Firsthabit.WebGL
 
         private void DrawAvatarManagement(FirsthabitWebGLBridge bridge)
         {
-            var count = Application.isPlaying ? bridge.AvatarPrefabCount : avatarEntriesProp.arraySize;
             showAvatarManagement = EditorGUILayout.BeginFoldoutHeaderGroup(showAvatarManagement,
-                $"Avatar Prefabs ({count})");
+                "Avatar Catalog");
             if (showAvatarManagement)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(avatarEntriesProp, new GUIContent("Entries"), true);
+                EditorGUILayout.PropertyField(avatarCatalogProp, new GUIContent("Catalog",
+                    "ScriptableObject containing avatar prefab entries"));
+
+                if (Application.isPlaying)
+                {
+                    EditorGUILayout.LabelField("Loaded Prefabs", bridge.AvatarPrefabCount.ToString());
+                }
+
                 EditorGUI.indentLevel--;
             }
             EditorGUILayout.EndFoldoutHeaderGroup();

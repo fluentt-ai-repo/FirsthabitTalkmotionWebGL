@@ -20,19 +20,12 @@ namespace Firsthabit.WebGL
         [SerializeField] private bool enableLogging = true;
 
         [Header("Avatar Management")]
-        [SerializeField] private AvatarEntry[] avatarEntries;
+        [SerializeField] private AvatarCatalog avatarCatalog;
         [SerializeField] private string editorTestAvatarId;
 
         #endregion
 
         #region Data Classes
-
-        [Serializable]
-        public class AvatarEntry
-        {
-            public string id;
-            public GameObject prefab;
-        }
 
         [Serializable]
         private class PrepareRequest
@@ -113,19 +106,11 @@ namespace Firsthabit.WebGL
 
         private void Awake()
         {
-            // Build avatar prefab map
-            avatarPrefabMap = new Dictionary<string, GameObject>();
-            if (avatarEntries != null)
-            {
-                foreach (var entry in avatarEntries)
-                {
-                    if (entry != null && !string.IsNullOrEmpty(entry.id) && entry.prefab != null)
-                    {
-                        avatarPrefabMap[entry.id] = entry.prefab;
-                    }
-                }
-                Log($"Avatar prefab map built: {avatarPrefabMap.Count} entries");
-            }
+            // Build avatar prefab map from catalog
+            avatarPrefabMap = avatarCatalog != null
+                ? avatarCatalog.BuildPrefabMap()
+                : new Dictionary<string, GameObject>();
+            Log($"Avatar prefab map built: {avatarPrefabMap.Count} entries");
 
             // If avatar is already assigned in Inspector or exists in scene, use it
             if (fluentTAvatar == null)
