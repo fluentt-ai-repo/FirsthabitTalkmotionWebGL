@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 
-import 'package:web/web.dart' as web;
-
 /// Bridge class for communicating with Unity WebGL via JavaScript interop.
 ///
 /// Flutter → Unity: Uses `window.sendToUnity()` (which calls `unityInstance.SendMessage`)
@@ -15,7 +13,8 @@ class UnityBridge {
   // Stream controllers for Unity → Flutter callbacks
   final _onBridgeReady = StreamController<void>.broadcast();
   final _onPrepared = StreamController<String>.broadcast();
-  final _onPrepareFailed = StreamController<({String id, String error})>.broadcast();
+  final _onPrepareFailed =
+      StreamController<({String id, String error})>.broadcast();
   final _onPlaybackStarted = StreamController<String>.broadcast();
   final _onPlaybackCompleted = StreamController<String>.broadcast();
   final _onSentenceStarted = StreamController<String>.broadcast();
@@ -25,15 +24,20 @@ class UnityBridge {
   final _onRequestSent = StreamController<String>.broadcast();
   final _onResponseReceived = StreamController<String>.broadcast();
   final _onVolumeChanged = StreamController<double>.broadcast();
-  final _onError = StreamController<({String method, String message})>.broadcast();
-  final _onCacheInfo = StreamController<({int count, List<String> ids})>.broadcast();
-  final _onAvatarChanged = StreamController<({String avatarId, bool success, String error})>.broadcast();
-  final _onAvatarList = StreamController<({List<String> avatarIds, String currentAvatarId})>.broadcast();
+  final _onError =
+      StreamController<({String method, String message})>.broadcast();
+  final _onCacheInfo =
+      StreamController<({int count, List<String> ids})>.broadcast();
+  final _onAvatarChanged = StreamController<
+      ({String avatarId, bool success, String error})>.broadcast();
+  final _onAvatarList = StreamController<
+      ({List<String> avatarIds, String currentAvatarId})>.broadcast();
 
   // Public streams
   Stream<void> get onBridgeReady => _onBridgeReady.stream;
   Stream<String> get onPrepared => _onPrepared.stream;
-  Stream<({String id, String error})> get onPrepareFailed => _onPrepareFailed.stream;
+  Stream<({String id, String error})> get onPrepareFailed =>
+      _onPrepareFailed.stream;
   Stream<String> get onPlaybackStarted => _onPlaybackStarted.stream;
   Stream<String> get onPlaybackCompleted => _onPlaybackCompleted.stream;
   Stream<String> get onSentenceStarted => _onSentenceStarted.stream;
@@ -44,9 +48,12 @@ class UnityBridge {
   Stream<String> get onResponseReceived => _onResponseReceived.stream;
   Stream<double> get onVolumeChanged => _onVolumeChanged.stream;
   Stream<({String method, String message})> get onError => _onError.stream;
-  Stream<({int count, List<String> ids})> get onCacheInfo => _onCacheInfo.stream;
-  Stream<({String avatarId, bool success, String error})> get onAvatarChanged => _onAvatarChanged.stream;
-  Stream<({List<String> avatarIds, String currentAvatarId})> get onAvatarList => _onAvatarList.stream;
+  Stream<({int count, List<String> ids})> get onCacheInfo =>
+      _onCacheInfo.stream;
+  Stream<({String avatarId, bool success, String error})> get onAvatarChanged =>
+      _onAvatarChanged.stream;
+  Stream<({List<String> avatarIds, String currentAvatarId})> get onAvatarList =>
+      _onAvatarList.stream;
 
   UnityBridge() {
     _registerCallbacks();
@@ -105,13 +112,15 @@ class UnityBridge {
         final avatarId = map['avatarId'] as String;
         final success = map['success'] as bool;
         final error = (map['error'] as String?) ?? '';
-        _onAvatarChanged.add((avatarId: avatarId, success: success, error: error));
+        _onAvatarChanged
+            .add((avatarId: avatarId, success: success, error: error));
       }).toJS,
       onAvatarList: ((JSString json) {
         final map = jsonDecode(json.toDart) as Map<String, dynamic>;
         final avatarIds = (map['avatarIds'] as List<dynamic>).cast<String>();
         final currentAvatarId = map['currentAvatarId'] as String;
-        _onAvatarList.add((avatarIds: avatarIds, currentAvatarId: currentAvatarId));
+        _onAvatarList
+            .add((avatarIds: avatarIds, currentAvatarId: currentAvatarId));
       }).toJS,
     );
 
@@ -129,7 +138,8 @@ class UnityBridge {
   /// [text] is the subtitle/transcript text for emotion tagging.
   void prepareAudio(String base64Audio, String format, {String text = ''}) {
     _pendingAudioBase64 = base64Audio.toJS;
-    final json = '{"format":"${_escapeJson(format)}","text":"${_escapeJson(text)}"}';
+    final json =
+        '{"format":"${_escapeJson(format)}","text":"${_escapeJson(text)}"}';
     _sendToUnity('PrepareAudio', json);
   }
 
@@ -168,7 +178,8 @@ class UnityBridge {
   /// [prepareOnly] if true, only prepares (use play() later).
   /// [playAudio] if false, motion only (no audio).
   void chat(String text, {bool prepareOnly = false, bool playAudio = true}) {
-    final json = '{"text":"${_escapeJson(text)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+    final json =
+        '{"text":"${_escapeJson(text)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
     _sendToUnity('Chat', json);
   }
 
@@ -177,8 +188,12 @@ class UnityBridge {
   /// [subtitleText] optional separate subtitle text.
   /// [prepareOnly] if true, only prepares (use play() later).
   /// [playAudio] if false, motion only (no audio).
-  void speak(String text, {String subtitleText = '', bool prepareOnly = false, bool playAudio = true}) {
-    final json = '{"text":"${_escapeJson(text)}","subtitleText":"${_escapeJson(subtitleText)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
+  void speak(String text,
+      {String subtitleText = '',
+      bool prepareOnly = false,
+      bool playAudio = true}) {
+    final json =
+        '{"text":"${_escapeJson(text)}","subtitleText":"${_escapeJson(subtitleText)}","prepareOnly":$prepareOnly,"playAudio":$playAudio}';
     _sendToUnity('Speak', json);
   }
 
@@ -231,7 +246,8 @@ class UnityBridge {
 
 /// Call window.sendToUnity(gameObject, method, param)
 @JS('sendToUnity')
-external void _jsSendToUnity(JSString gameObject, JSString method, JSString param);
+external void _jsSendToUnity(
+    JSString gameObject, JSString method, JSString param);
 
 /// Toggle checkerboard debug background in Unity iframe
 @JS('setTransparentDebug')

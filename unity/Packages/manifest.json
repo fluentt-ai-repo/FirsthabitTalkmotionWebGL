@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
-    "com.fluentt.avatar-controller-sample-floating-head": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git#feat/idle-override-eye-control",
-    "com.fluentt.talkmotion": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git#feat/base-expression",
+    "com.fluentt.avatar-controller-sample-floating-head": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git",
+    "com.fluentt.talkmotion": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git",
     "com.unity.animation.rigging": "1.4.1",
     "com.unity.burst": "1.8.29",
     "com.unity.collections": "2.6.5",
