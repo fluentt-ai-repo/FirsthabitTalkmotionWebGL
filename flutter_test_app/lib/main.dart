@@ -65,8 +65,8 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
 
   // Avatar state
   static const _fallbackAvatarIds = [
-    'sangjun', 'seokhee', 'taerin',
-    'new01', 'new02', 'new03', 'new04', 'new05', 'new06', 'new07',
+    'marie', 'ethan', 'leo', 'max', 'sophia',
+    'ella', 'nora', 'kai', 'lina', 'owen',
   ];
   List<String> _avatarIds = [];
   String? _currentAvatarId;
@@ -721,39 +721,29 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Row(
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
                   children: [
-                    Expanded(
-                      child: FilledButton.icon(
+                    for (final group in ['Listening', 'Listening2', 'Thinking'])
+                      FilledButton.icon(
                         onPressed: () {
-                          _bridge.playOneShotMotionGroup('Listening');
-                          _addLog('>> PlayOneShotMotion: group=Listening');
+                          _bridge.playOneShotMotionGroup(group);
+                          _addLog('>> PlayOneShotMotion: group=$group');
                         },
-                        icon: const Icon(Icons.hearing, size: 18),
-                        label: const Text('Listening'),
+                        icon: Icon(
+                          group.startsWith('Listening') ? Icons.hearing : Icons.psychology,
+                          size: 18,
+                        ),
+                        label: Text(group),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          _bridge.playOneShotMotionGroup('Thinking');
-                          _addLog('>> PlayOneShotMotion: group=Thinking');
-                        },
-                        icon: const Icon(Icons.psychology, size: 18),
-                        label: const Text('Thinking'),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    SizedBox(
-                      width: 64,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          _bridge.stopOneShotMotion();
-                          _addLog('>> StopOneShotMotion');
-                        },
-                        child: const Icon(Icons.stop, size: 18),
-                      ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        _bridge.stopOneShotMotion();
+                        _addLog('>> StopOneShotMotion');
+                      },
+                      icon: const Icon(Icons.stop, size: 18),
+                      label: const Text('Stop'),
                     ),
                   ],
                 ),

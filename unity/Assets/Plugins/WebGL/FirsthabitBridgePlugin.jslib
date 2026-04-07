@@ -7,7 +7,6 @@ mergeInto(LibraryManager.library, {
 
     FH_OnBridgeReady__deps: ['$FH'],
     FH_OnBridgeReady: function() {
-        console.log('[FirsthabitBridge] Bridge ready');
         var b = _fhBridge();
         if (b && b.onBridgeReady) b.onBridgeReady();
     },
@@ -15,7 +14,6 @@ mergeInto(LibraryManager.library, {
     FH_OnPrepared__deps: ['$FH'],
     FH_OnPrepared: function(idPtr) {
         var id = UTF8ToString(idPtr);
-        console.log('[FirsthabitBridge] Prepared: ' + id);
         var b = _fhBridge();
         if (b && b.onPrepared) b.onPrepared(id);
     },
@@ -24,7 +22,6 @@ mergeInto(LibraryManager.library, {
     FH_OnPrepareFailed: function(idPtr, errorPtr) {
         var id = UTF8ToString(idPtr);
         var error = UTF8ToString(errorPtr);
-        console.log('[FirsthabitBridge] Prepare failed: ' + id + ' - ' + error);
         var b = _fhBridge();
         if (b && b.onPrepareFailed) b.onPrepareFailed(id, error);
     },
@@ -32,7 +29,6 @@ mergeInto(LibraryManager.library, {
     FH_OnPlaybackStarted__deps: ['$FH'],
     FH_OnPlaybackStarted: function(idPtr) {
         var id = UTF8ToString(idPtr);
-        console.log('[FirsthabitBridge] Playback started: ' + id);
         var b = _fhBridge();
         if (b && b.onPlaybackStarted) b.onPlaybackStarted(id);
     },
@@ -40,7 +36,6 @@ mergeInto(LibraryManager.library, {
     FH_OnPlaybackCompleted__deps: ['$FH'],
     FH_OnPlaybackCompleted: function(idPtr) {
         var id = UTF8ToString(idPtr);
-        console.log('[FirsthabitBridge] Playback completed: ' + id);
         var b = _fhBridge();
         if (b && b.onPlaybackCompleted) b.onPlaybackCompleted(id);
     },
@@ -48,7 +43,6 @@ mergeInto(LibraryManager.library, {
     FH_OnSentenceStarted__deps: ['$FH'],
     FH_OnSentenceStarted: function(textPtr) {
         var text = UTF8ToString(textPtr);
-        console.log('[FirsthabitBridge] Sentence started: ' + text);
         var b = _fhBridge();
         if (b && b.onSentenceStarted) b.onSentenceStarted(text);
     },
@@ -56,7 +50,6 @@ mergeInto(LibraryManager.library, {
     FH_OnSentenceEnded__deps: ['$FH'],
     FH_OnSentenceEnded: function(textPtr) {
         var text = UTF8ToString(textPtr);
-        console.log('[FirsthabitBridge] Sentence ended: ' + text);
         var b = _fhBridge();
         if (b && b.onSentenceEnded) b.onSentenceEnded(text);
     },
@@ -64,7 +57,6 @@ mergeInto(LibraryManager.library, {
     FH_OnSubtitleStarted__deps: ['$FH'],
     FH_OnSubtitleStarted: function(textPtr) {
         var text = UTF8ToString(textPtr);
-        console.log('[FirsthabitBridge] Subtitle started: ' + text);
         var b = _fhBridge();
         if (b && b.onSubtitleStarted) b.onSubtitleStarted(text);
     },
@@ -72,7 +64,6 @@ mergeInto(LibraryManager.library, {
     FH_OnSubtitleEnded__deps: ['$FH'],
     FH_OnSubtitleEnded: function(textPtr) {
         var text = UTF8ToString(textPtr);
-        console.log('[FirsthabitBridge] Subtitle ended: ' + text);
         var b = _fhBridge();
         if (b && b.onSubtitleEnded) b.onSubtitleEnded(text);
     },
@@ -80,7 +71,6 @@ mergeInto(LibraryManager.library, {
     FH_OnRequestSent__deps: ['$FH'],
     FH_OnRequestSent: function(idPtr) {
         var id = UTF8ToString(idPtr);
-        console.log('[FirsthabitBridge] Request sent: ' + id);
         var b = _fhBridge();
         if (b && b.onRequestSent) b.onRequestSent(id);
     },
@@ -88,7 +78,6 @@ mergeInto(LibraryManager.library, {
     FH_OnResponseReceived__deps: ['$FH'],
     FH_OnResponseReceived: function(idPtr) {
         var id = UTF8ToString(idPtr);
-        console.log('[FirsthabitBridge] Response received: ' + id);
         var b = _fhBridge();
         if (b && b.onResponseReceived) b.onResponseReceived(id);
     },
@@ -96,7 +85,6 @@ mergeInto(LibraryManager.library, {
     FH_OnCacheInfo__deps: ['$FH'],
     FH_OnCacheInfo: function(jsonPtr) {
         var json = UTF8ToString(jsonPtr);
-        console.log('[FirsthabitBridge] CacheInfo: ' + json);
         var b = _fhBridge();
         if (b && b.onCacheInfo) b.onCacheInfo(json);
     },
@@ -104,7 +92,6 @@ mergeInto(LibraryManager.library, {
     FH_OnAvatarChanged__deps: ['$FH'],
     FH_OnAvatarChanged: function(jsonPtr) {
         var json = UTF8ToString(jsonPtr);
-        console.log('[FirsthabitBridge] AvatarChanged: ' + json);
         var b = _fhBridge();
         if (b && b.onAvatarChanged) b.onAvatarChanged(json);
     },
@@ -112,14 +99,12 @@ mergeInto(LibraryManager.library, {
     FH_OnAvatarList__deps: ['$FH'],
     FH_OnAvatarList: function(jsonPtr) {
         var json = UTF8ToString(jsonPtr);
-        console.log('[FirsthabitBridge] AvatarList: ' + json);
         var b = _fhBridge();
         if (b && b.onAvatarList) b.onAvatarList(json);
     },
 
     FH_OnVolumeChanged__deps: ['$FH'],
     FH_OnVolumeChanged: function(volume) {
-        console.log('[FirsthabitBridge] Volume changed: ' + volume);
         var b = _fhBridge();
         if (b && b.onVolumeChanged) b.onVolumeChanged(volume);
     },
@@ -127,7 +112,6 @@ mergeInto(LibraryManager.library, {
     FH_OnOneShotMotionStarted__deps: ['$FH'],
     FH_OnOneShotMotionStarted: function(motionIdPtr) {
         var motionId = UTF8ToString(motionIdPtr);
-        console.log('[FirsthabitBridge] OneShotMotion started: ' + motionId);
         var b = _fhBridge();
         if (b && b.onOneShotMotionStarted) b.onOneShotMotionStarted(motionId);
     },
@@ -135,7 +119,6 @@ mergeInto(LibraryManager.library, {
     FH_OnOneShotMotionEnded__deps: ['$FH'],
     FH_OnOneShotMotionEnded: function(motionIdPtr) {
         var motionId = UTF8ToString(motionIdPtr);
-        console.log('[FirsthabitBridge] OneShotMotion ended: ' + motionId);
         var b = _fhBridge();
         if (b && b.onOneShotMotionEnded) b.onOneShotMotionEnded(motionId);
     },
@@ -143,7 +126,6 @@ mergeInto(LibraryManager.library, {
     FH_OnOneShotMotionList__deps: ['$FH'],
     FH_OnOneShotMotionList: function(jsonPtr) {
         var json = UTF8ToString(jsonPtr);
-        console.log('[FirsthabitBridge] OneShotMotionList: ' + json);
         var b = _fhBridge();
         if (b && b.onOneShotMotionList) b.onOneShotMotionList(json);
     },

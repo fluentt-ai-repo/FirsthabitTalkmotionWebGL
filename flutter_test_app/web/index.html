@@ -18,6 +18,7 @@
     // ============================================================
 
     var unityInstance = null;
+    var pendingMessages = [];
 
     // Called from Flutter after iframe is registered
     window.connectUnityIframe = function() {
@@ -29,6 +30,11 @@
             unityInstance = iframe.contentWindow.unityInstance;
             console.log('[FirsthabitBridge] Unity instance connected');
             clearInterval(checkInterval);
+            // Flush queued messages
+            while (pendingMessages.length > 0) {
+              var msg = pendingMessages.shift();
+              unityInstance.SendMessage(msg.gameObject, msg.method, msg.param);
+            }
           }
         } catch (e) {}
       }, 500);
@@ -45,9 +51,8 @@
     window.sendToUnity = function(gameObject, method, param) {
       if (unityInstance) {
         unityInstance.SendMessage(gameObject, method, param || '');
-        console.log('[FirsthabitBridge] SendMessage: ' + gameObject + '.' + method + '(' + (param || '') + ')');
       } else {
-        console.warn('[FirsthabitBridge] Unity instance not ready yet');
+        pendingMessages.push({gameObject: gameObject, method: method, param: param || ''});
       }
     };
 
