@@ -32,6 +32,10 @@ class UnityBridge {
       ({String avatarId, bool success, String error})>.broadcast();
   final _onAvatarList = StreamController<
       ({List<String> avatarIds, String currentAvatarId})>.broadcast();
+  final _onOneShotMotionStarted = StreamController<String>.broadcast();
+  final _onOneShotMotionEnded = StreamController<String>.broadcast();
+  final _onOneShotMotionList = StreamController<
+      ({List<String> motionIds, List<String> groupIds})>.broadcast();
 
   // Public streams
   Stream<void> get onBridgeReady => _onBridgeReady.stream;
@@ -54,6 +58,10 @@ class UnityBridge {
       _onAvatarChanged.stream;
   Stream<({List<String> avatarIds, String currentAvatarId})> get onAvatarList =>
       _onAvatarList.stream;
+  Stream<String> get onOneShotMotionStarted => _onOneShotMotionStarted.stream;
+  Stream<String> get onOneShotMotionEnded => _onOneShotMotionEnded.stream;
+  Stream<({List<String> motionIds, List<String> groupIds})>
+      get onOneShotMotionList => _onOneShotMotionList.stream;
 
   UnityBridge() {
     _registerCallbacks();
@@ -121,6 +129,19 @@ class UnityBridge {
         final currentAvatarId = map['currentAvatarId'] as String;
         _onAvatarList
             .add((avatarIds: avatarIds, currentAvatarId: currentAvatarId));
+      }).toJS,
+      onOneShotMotionStarted: ((JSString motionId) {
+        _onOneShotMotionStarted.add(motionId.toDart);
+      }).toJS,
+      onOneShotMotionEnded: ((JSString motionId) {
+        _onOneShotMotionEnded.add(motionId.toDart);
+      }).toJS,
+      onOneShotMotionList: ((JSString json) {
+        final map = jsonDecode(json.toDart) as Map<String, dynamic>;
+        final motionIds = (map['motionIds'] as List<dynamic>).cast<String>();
+        final groupIds = (map['groupIds'] as List<dynamic>).cast<String>();
+        _onOneShotMotionList
+            .add((motionIds: motionIds, groupIds: groupIds));
       }).toJS,
     );
 
@@ -203,6 +224,28 @@ class UnityBridge {
     _sendToUnity('SetBackgroundColor', colorString);
   }
 
+  /// Play a one-shot motion group (loops random weighted clips until stopped).
+  void playOneShotMotionGroup(String groupId) {
+    final json = '{"groupId":"${_escapeJson(groupId)}"}';
+    _sendToUnity('PlayOneShotMotion', json);
+  }
+
+  /// Play a single one-shot motion by ID (plays once, returns to idle).
+  void playOneShotMotion(String motionId) {
+    final json = '{"motionId":"${_escapeJson(motionId)}"}';
+    _sendToUnity('PlayOneShotMotion', json);
+  }
+
+  /// Stop the currently playing one-shot motion.
+  void stopOneShotMotion() {
+    _sendToUnity('StopOneShotMotion', '');
+  }
+
+  /// Get available one-shot motion IDs and group IDs.
+  void getOneShotMotionList() {
+    _sendToUnity('GetOneShotMotionList', '');
+  }
+
   // -------------------------------------------------------
   // Internal helpers
   // -------------------------------------------------------
@@ -237,6 +280,9 @@ class UnityBridge {
     _onCacheInfo.close();
     _onAvatarChanged.close();
     _onAvatarList.close();
+    _onOneShotMotionStarted.close();
+    _onOneShotMotionEnded.close();
+    _onOneShotMotionList.close();
   }
 }
 
@@ -284,5 +330,8 @@ extension type _FirsthabitBridgeJS._(JSObject _) implements JSObject {
     JSFunction onCacheInfo,
     JSFunction onAvatarChanged,
     JSFunction onAvatarList,
+    JSFunction onOneShotMotionStarted,
+    JSFunction onOneShotMotionEnded,
+    JSFunction onOneShotMotionList,
   });
 }

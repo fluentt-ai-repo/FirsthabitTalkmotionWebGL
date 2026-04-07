@@ -71,6 +71,10 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
   List<String> _avatarIds = [];
   String? _currentAvatarId;
 
+  // One-shot motion state
+  bool _oneShotPlaying = false;
+  String? _currentOneShotId;
+
   // Batch test state
   final _batchFiles = <({String base64, String format, String fileName})>[];
   final _batchCacheIds = <String>[];
@@ -178,6 +182,26 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
         _currentAvatarId = e.currentAvatarId;
       });
       _addLog('AvatarList: ${e.avatarIds} (current: ${e.currentAvatarId})');
+    });
+
+    _bridge.onOneShotMotionStarted.listen((motionId) {
+      setState(() {
+        _oneShotPlaying = true;
+        _currentOneShotId = motionId;
+      });
+      _addLog('OneShotStarted: $motionId');
+    });
+
+    _bridge.onOneShotMotionEnded.listen((motionId) {
+      setState(() {
+        _oneShotPlaying = false;
+        _currentOneShotId = null;
+      });
+      _addLog('OneShotEnded: $motionId');
+    });
+
+    _bridge.onOneShotMotionList.listen((e) {
+      _addLog('OneShotMotionList: motions=${e.motionIds}, groups=${e.groupIds}');
     });
   }
 
@@ -676,6 +700,60 @@ class _BridgeTestPageState extends State<BridgeTestPage> {
                         _bridge.setBackgroundColor('transparent');
                         _addLog('>> Background: transparent');
                       },
+                    ),
+                  ],
+                ),
+
+                // --- One-Shot Motion controls ---
+                const Divider(height: 16),
+                Row(
+                  children: [
+                    Text('One-Shot Motion', style: Theme.of(context).textTheme.titleSmall),
+                    if (_oneShotPlaying && _currentOneShotId != null) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '(playing: $_currentOneShotId)',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          _bridge.playOneShotMotionGroup('Listening');
+                          _addLog('>> PlayOneShotMotion: group=Listening');
+                        },
+                        icon: const Icon(Icons.hearing, size: 18),
+                        label: const Text('Listening'),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          _bridge.playOneShotMotionGroup('Thinking');
+                          _addLog('>> PlayOneShotMotion: group=Thinking');
+                        },
+                        icon: const Icon(Icons.psychology, size: 18),
+                        label: const Text('Thinking'),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    SizedBox(
+                      width: 64,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          _bridge.stopOneShotMotion();
+                          _addLog('>> StopOneShotMotion');
+                        },
+                        child: const Icon(Icons.stop, size: 18),
+                      ),
                     ),
                   ],
                 ),

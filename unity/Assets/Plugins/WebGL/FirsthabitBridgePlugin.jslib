@@ -124,6 +124,30 @@ mergeInto(LibraryManager.library, {
         if (b && b.onVolumeChanged) b.onVolumeChanged(volume);
     },
 
+    FH_OnOneShotMotionStarted__deps: ['$FH'],
+    FH_OnOneShotMotionStarted: function(motionIdPtr) {
+        var motionId = UTF8ToString(motionIdPtr);
+        console.log('[FirsthabitBridge] OneShotMotion started: ' + motionId);
+        var b = _fhBridge();
+        if (b && b.onOneShotMotionStarted) b.onOneShotMotionStarted(motionId);
+    },
+
+    FH_OnOneShotMotionEnded__deps: ['$FH'],
+    FH_OnOneShotMotionEnded: function(motionIdPtr) {
+        var motionId = UTF8ToString(motionIdPtr);
+        console.log('[FirsthabitBridge] OneShotMotion ended: ' + motionId);
+        var b = _fhBridge();
+        if (b && b.onOneShotMotionEnded) b.onOneShotMotionEnded(motionId);
+    },
+
+    FH_OnOneShotMotionList__deps: ['$FH'],
+    FH_OnOneShotMotionList: function(jsonPtr) {
+        var json = UTF8ToString(jsonPtr);
+        console.log('[FirsthabitBridge] OneShotMotionList: ' + json);
+        var b = _fhBridge();
+        if (b && b.onOneShotMotionList) b.onOneShotMotionList(json);
+    },
+
     FH_OnError__deps: ['$FH'],
     FH_OnError: function(methodPtr, messagePtr) {
         var method = UTF8ToString(methodPtr);

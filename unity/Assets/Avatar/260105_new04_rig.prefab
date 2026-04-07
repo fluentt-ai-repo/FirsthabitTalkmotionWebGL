@@ -1154,6 +1154,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2168394226173205682, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2168394226173205682, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.08792136
+      objectReference: {fileID: 0}
+    - target: {fileID: 2168394226173205682, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.007735532
+      objectReference: {fileID: 0}
+    - target: {fileID: 2168394226173205682, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2168394226173205682, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 5.6843412e-14
+      objectReference: {fileID: 0}
     - target: {fileID: 3108678776676352288, guid: a7cf97a15078595469ae2b26045c3345, type: 3}
       propertyPath: m_RenderingLayerMask
       value: 5
@@ -1332,7 +1352,10 @@ MonoBehaviour:
     onListeningStateChanged:
       m_PersistentCalls:
         m_Calls: []
-  headSkmr: []
+  headSkmr:
+  - {fileID: 3686766758108926122}
+  - {fileID: 4985251044056100498}
+  - {fileID: 4987106652989327349}
   faceBlendShapeList: []
   clipFaceBase:
     name: FaceBase
@@ -1751,10 +1774,21 @@ MonoBehaviour:
   faceBlendOutTime: 0.1
   faceBlendMode: 2
   useBaseFaceClip: 0
+  baseExpressionClip: {fileID: 7400000, guid: 2cddf37ef449a384dad3562f66171543, type: 2}
+  baseExpressionKeys:
+  - mouthDimpleLeft
+  - mouthDimpleRight
+  - mouthSmileLeft
+  - mouthSmileRight
+  baseExpressionValues:
+  - 20
+  - 20
+  - 50
+  - 50
   enableHeadAnimation: 1
   normalizeHeadMotion: 1
   headPositionScale: {x: 1, y: 1, z: 1}
-  headRotationScale: {x: 0.5, y: 0.7, z: 1}
+  headRotationScale: {x: 0.4, y: 0.5, z: 0.5}
   headBlendInTime: 0.5
   headBlendOutTime: 0.5
   ignoredBlendShapes: 0100000002000000030000000400000008000000090000000a0000000b000000
@@ -1821,9 +1855,67 @@ MonoBehaviour:
   avatar: {fileID: 3187194014816277881}
   animatorController: {fileID: 9100000, guid: b792cf61491357a4185f3060f1f54cf7, type: 2}
   idleAnimations:
-  - clip: {fileID: 7400000, guid: 2cddf37ef449a384dad3562f66171543, type: 2}
+  - clip: {fileID: 7400000, guid: 2906481b830051a4ea321350a5ee2edf, type: 2}
     weight: 1
-    preventRepeat: 0
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: 3da3f4fab66b0824cbc69d946c0028e1, type: 2}
+    weight: 2
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: 2f9b10377055be841b4ab016c7572418, type: 2}
+    weight: 1
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: a580b4e483483d34cb35be92ed77ede5, type: 2}
+    weight: 2
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 0}
+    weight: 1
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 0}
+    weight: 10
+    overrideEyeControl: 0
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: 7498d279bba885547aeea5f6230ccbe4, type: 2}
+    weight: 1
+    overrideEyeControl: 1
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: 8f57d9c676968644087fc54795507bc0, type: 2}
+    weight: 2
+    overrideEyeControl: 1
+    overrideEyeBlink: 0
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: d89447456d5b224498a6b705b940fe3d, type: 2}
+    weight: 1
+    overrideEyeControl: 0
+    overrideEyeBlink: 1
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: d86648960ead4f14aa46152facc292d4, type: 2}
+    weight: 1
+    overrideEyeControl: 0
+    overrideEyeBlink: 1
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: ad420e1563b1e8240af576a267f45efa, type: 2}
+    weight: 1
+    overrideEyeControl: 0
+    overrideEyeBlink: 1
+    preventRepeat: 1
+  - clip: {fileID: 7400000, guid: e0c4d793217137345bd6a0549b2ebcab, type: 2}
+    weight: 1
+    overrideEyeControl: 1
+    overrideEyeBlink: 1
+    preventRepeat: 1
+  talkMotionIdleClip: {fileID: 7400000, guid: 992aa745c4d5db04cb237eb14c7f8097, type: 2}
   defaultIdleAnimationClip: {fileID: 7400000, guid: 21d0cbf3eff80dd40b576a4a2063c4fc, type: 2}
   enableLookTarget: 1
   lookTarget: {fileID: 0}
@@ -1848,107 +1940,351 @@ MonoBehaviour:
     eyeLookIntoVoid: {x: 0, y: 0}
     eyeAngleVariance: {x: 0, y: 0}
   enableTextEmotionDetection: 1
-  maxEmotionTagsPerSentence: 1
+  maxEmotionTagsPerSentence: 2
   emotionKeywordDataset: {fileID: 11400000, guid: dd733598a5da3ee47bd2ffb3d38a3952, type: 2}
   enableServerMotionTagging: 1
   enableAutoEmotionReset: 1
   gestureMappings:
   - emotionTag: "\uB3D9\uC758"
-    animationClips:
-    - {fileID: 7400000, guid: 46e9133680d054347a8135f26b39d05e, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 46e9133680d054347a8135f26b39d05e, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uD655\uC778"
-    animationClips:
-    - {fileID: 7400000, guid: 3658ee6c57064d14d8b4b36a03d2a629, type: 2}
-    - {fileID: 7400000, guid: 51a9a147447ec5f47be83685713059da, type: 2}
-    - {fileID: 7400000, guid: ebebbb6cb00a11c489aadd976e604fd3, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 3658ee6c57064d14d8b4b36a03d2a629, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 51a9a147447ec5f47be83685713059da, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: ebebbb6cb00a11c489aadd976e604fd3, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uAC15\uC870"
-    animationClips:
-    - {fileID: 7400000, guid: db300b3f0d1354640aae85d407b55552, type: 2}
-    - {fileID: 7400000, guid: c0cbb520c415a4e45a0da2def94e0c53, type: 2}
-    - {fileID: 7400000, guid: 51555c00a8a908b4a9d1097953a0ff7d, type: 2}
-    - {fileID: 7400000, guid: a3e2708782a66a644acce4e9b2b87183, type: 2}
-    - {fileID: 7400000, guid: b6f96e6087b8d3547b01742c4a17b6c0, type: 2}
-    - {fileID: 7400000, guid: 1a0cb1353b5cc54459806b8558349aa8, type: 2}
-    - {fileID: 7400000, guid: 4a50fbd885465d449afe1d19257b6e6c, type: 2}
-    - {fileID: 7400000, guid: 0b20de044b405a448b7e29107ab3d072, type: 2}
-    - {fileID: 7400000, guid: 8a66a1c80d7a3ee42bb9216dbbb8bb8d, type: 2}
-    - {fileID: 7400000, guid: 57fc60b3c460d6d41a3c702d9f731432, type: 2}
-    - {fileID: 7400000, guid: 1c23d3d804ed9274eaf7300f7ab2bbcd, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: db300b3f0d1354640aae85d407b55552, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: c0cbb520c415a4e45a0da2def94e0c53, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 51555c00a8a908b4a9d1097953a0ff7d, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: a3e2708782a66a644acce4e9b2b87183, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: b6f96e6087b8d3547b01742c4a17b6c0, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 1a0cb1353b5cc54459806b8558349aa8, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 4a50fbd885465d449afe1d19257b6e6c, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 0b20de044b405a448b7e29107ab3d072, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 8a66a1c80d7a3ee42bb9216dbbb8bb8d, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 57fc60b3c460d6d41a3c702d9f731432, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 1c23d3d804ed9274eaf7300f7ab2bbcd, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
   - emotionTag: "\uB4E3\uAE30"
-    animationClips:
-    - {fileID: 7400000, guid: cc0293baf36701040aacd47b6f3baa18, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: cc0293baf36701040aacd47b6f3baa18, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uBD80\uC815"
-    animationClips:
-    - {fileID: 7400000, guid: 61bdcafaedc54b543868945efc51c8bb, type: 2}
-    - {fileID: 7400000, guid: 373f66ba024351948a7117a84c071add, type: 2}
-    - {fileID: 7400000, guid: bebc1bbe73fa72a47849cfca3c20e487, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 61bdcafaedc54b543868945efc51c8bb, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 373f66ba024351948a7117a84c071add, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: bebc1bbe73fa72a47849cfca3c20e487, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uC9C8\uBB38"
-    animationClips:
-    - {fileID: 7400000, guid: 924e575f25e5fca4d9179d0c405412cc, type: 2}
-    - {fileID: 7400000, guid: 800ec130026450b46ba5fdf4e033e61e, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 924e575f25e5fca4d9179d0c405412cc, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 800ec130026450b46ba5fdf4e033e61e, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uD658\uAE30"
-    animationClips:
-    - {fileID: 7400000, guid: 628c1ed6f2d745944ba22f143cc4bbef, type: 2}
-    - {fileID: 7400000, guid: b822120660e7c9a47bd6193975f8c9be, type: 2}
-    - {fileID: 7400000, guid: 7818a34d12840bd4ea5e339f4eaa0e33, type: 2}
-    - {fileID: 0}
-    - {fileID: 7400000, guid: 5ad5b44b84f888348b4ea6c34c04c2ed, type: 2}
-    - {fileID: 7400000, guid: 21b4fc3870f17244c808aa1a7245f227, type: 2}
-    - {fileID: 7400000, guid: bf08937a9499bcf4bb5eb07269b976d0, type: 2}
-    - {fileID: 7400000, guid: 37aa96d6f617e054b994e2ec5adfd311, type: 2}
-    - {fileID: 7400000, guid: aa9837ecc127f674a9d2c0b8399f91b5, type: 2}
-    - {fileID: 7400000, guid: 04b90ddb33b0c37478cd9b48331bff78, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 628c1ed6f2d745944ba22f143cc4bbef, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: b822120660e7c9a47bd6193975f8c9be, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 7818a34d12840bd4ea5e339f4eaa0e33, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 5ad5b44b84f888348b4ea6c34c04c2ed, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 21b4fc3870f17244c808aa1a7245f227, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: bf08937a9499bcf4bb5eb07269b976d0, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 37aa96d6f617e054b994e2ec5adfd311, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: aa9837ecc127f674a9d2c0b8399f91b5, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 04b90ddb33b0c37478cd9b48331bff78, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uC815\uB9AC"
-    animationClips:
-    - {fileID: 7400000, guid: b9d29221e3fa5fb42bec28c16cc4091f, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: b9d29221e3fa5fb42bec28c16cc4091f, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   - emotionTag: "\uC720\uB09C"
-    animationClips:
-    - {fileID: 7400000, guid: 58491a82a6601924c8e5978385812602, type: 2}
-    - {fileID: 7400000, guid: 0c83b5b42fb691c4ca64cf875c74655f, type: 2}
-    - {fileID: 7400000, guid: d16a03e0c1f2f8c41a947d925f2a9a2b, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 58491a82a6601924c8e5978385812602, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 0c83b5b42fb691c4ca64cf875c74655f, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: d16a03e0c1f2f8c41a947d925f2a9a2b, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uB2F9\uC5F0"
-    animationClips:
-    - {fileID: 7400000, guid: 2f6136355ef58c046bd43ad524c4bdab, type: 2}
-    - {fileID: 7400000, guid: a368a52ce73ee6f4f9dcefc9f9fe8ac6, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 2f6136355ef58c046bd43ad524c4bdab, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: a368a52ce73ee6f4f9dcefc9f9fe8ac6, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uAE0D\uC815"
-    animationClips:
-    - {fileID: 7400000, guid: 929f6038c36e2c64e9cdfc06fc3866e2, type: 2}
-    - {fileID: 7400000, guid: 76ce80d5e0ec8a547b69407a4ba2d71f, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 929f6038c36e2c64e9cdfc06fc3866e2, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 76ce80d5e0ec8a547b69407a4ba2d71f, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uC81C\uC548"
-    animationClips:
-    - {fileID: 7400000, guid: 9d61d29bff87ff44a9584e916c702344, type: 2}
-    - {fileID: 7400000, guid: e6e7a5e575905524bb5a5ee4c7f6c626, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 9d61d29bff87ff44a9584e916c702344, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: e6e7a5e575905524bb5a5ee4c7f6c626, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uACB0\uB860"
-    animationClips:
-    - {fileID: 7400000, guid: 62daa715dbefe6f48bc3195fd02f4ce9, type: 2}
-    - {fileID: 7400000, guid: 4620abf6e61c0ed4cb990dcf274c058f, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 62daa715dbefe6f48bc3195fd02f4ce9, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 4620abf6e61c0ed4cb990dcf274c058f, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
   - emotionTag: "\uBC84\uBC85\uC784"
-    animationClips:
-    - {fileID: 7400000, guid: 197463b1fb8507e4a881089ccdfa0c3f, type: 2}
-    - {fileID: 7400000, guid: 9b82eaab42a65834ea34d4a512b62e04, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: 197463b1fb8507e4a881089ccdfa0c3f, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 9b82eaab42a65834ea34d4a512b62e04, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   - emotionTag: "\uC554\uC0B0"
-    animationClips:
-    - {fileID: 7400000, guid: da0ad21e21293c24b8ab6f29329cf367, type: 2}
-    - {fileID: 7400000, guid: 6d774c666642b28439542e08c5f1021a, type: 2}
-    - {fileID: 7400000, guid: f3f63d4ad31a3254a9cca48e6f949ef8, type: 2}
-    - {fileID: 7400000, guid: 5d5b3b074fb622a48950ce13369e2347, type: 2}
-    blendWeight: 1
+    clips:
+    - clip: {fileID: 7400000, guid: da0ad21e21293c24b8ab6f29329cf367, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 6d774c666642b28439542e08c5f1021a, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: f3f63d4ad31a3254a9cca48e6f949ef8, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
+    - clip: {fileID: 7400000, guid: 5d5b3b074fb622a48950ce13369e2347, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 0
   oneShotMotions: []
-  oneShotMotionGroups: []
+  oneShotMotionGroups:
+  - groupId: Listening
+    entries:
+    - clip: {fileID: 7400000, guid: 89bc68882941cb74590704082791b929, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 453ad8d7ae2fa2c4f86bf54a63003b19, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: c80a23c0d3956384282036b539ba8f24, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 10e5b28bc3aac0344998fc69dc9bb1ad, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 3e59a4e2625f91b46824e1675ad2625a, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 9eb46b27e549bb542b00bd98b920d249, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: eba2c5d272e2d8a4f973a85aa48e1940, type: 2}
+      weight: 4
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 3dd0ee932d614c34babe6db99581735d, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 19178678bf2ec6449ae79d8e1bd1cb12, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 5637cc442585d014793474d45b95999c, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: e0b9730192853874fa28159f7c99dee7, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 461494d4e2d1d224b9ea875f28485212, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: b5e09cade5398be438b8b22359152578, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 40a4c064198a7504486c52f22955448b, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: f67bf6ef3be19ce41bfcabbd8a26fbb0, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: ec6acea8d8f326c4cae2659efee1e139, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: aa220511c47ab544ebbfd3381728930b, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+  - groupId: Thinking
+    entries:
+    - clip: {fileID: 7400000, guid: b5bee915169e3484b8ae82e7b48379f5, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 8d51093aa23e6244e9f5beb848bc8891, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 0d211519520836c4d8c1807bfdc201f7, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 866c3e46763e5014db2e0fa02c33d119, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 866c3e46763e5014db2e0fa02c33d119, type: 2}
+      weight: 1
+      overrideEyeControl: 1
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: d56963c35af73574e9869cb2d05d0d4b, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 25d6cd7ee82dff84a9b7535cb9bea320, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 203fbd92b516c8f41bc1a75c98c04276, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: 5402ac9bc341c2a459664f4c5b57b69d, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: ccab1120ed5a8ac4da3e2ca1fc554fb9, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
+    - clip: {fileID: 7400000, guid: c4d57348cbe74b646bb5b6e383cb48e5, type: 2}
+      weight: 1
+      overrideEyeControl: 0
+      overrideEyeBlink: 1
   onOneShotMotionStarted:
     m_PersistentCalls:
       m_Calls: []

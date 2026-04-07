@@ -1,15 +1,5 @@
 {
   "dependencies": {
-    "com.coplaydev.unity-mcp": {
-      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.2",
-        "com.unity.test-framework": "1.1.31"
-      },
-      "hash": "0f0eacf1821524c02d95a6cc909a3ed322560deb"
-    },
     "com.fluentt.avatar-controller-sample-floating-head": {
       "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git",
       "depth": 0,
@@ -17,7 +7,7 @@
       "dependencies": {
         "com.fluentt.talkmotion": "0.1.0"
       },
-      "hash": "a6597916e10a18b4fd7f89c39730c402737e1722"
+      "hash": "d6f7a25b84a29dadb0a7229c84406cf91172d2ff"
     },
     "com.fluentt.talkmotion": {
       "version": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git",

@@ -80,6 +80,20 @@ namespace Firsthabit.WebGL
             public string error;
         }
 
+        [Serializable]
+        private class OneShotMotionRequest
+        {
+            public string motionId = "";
+            public string groupId = "";
+        }
+
+        [Serializable]
+        private class OneShotMotionListResponse
+        {
+            public string[] motionIds;
+            public string[] groupIds;
+        }
+
         #endregion
 
         #region State
@@ -168,6 +182,14 @@ namespace Firsthabit.WebGL
             // Subtitle events
             fluentTAvatar.OnSubtitleTextStarted.AddListener(OnSubtitleStarted);
             fluentTAvatar.OnSubtitleTextEnded.AddListener(OnSubtitleEnded);
+
+            // One-shot motion events
+            var headController = GetHeadController();
+            if (headController != null)
+            {
+                headController.onOneShotMotionStarted.AddListener(OnOneShotMotionStarted);
+                headController.onOneShotMotionEnded.AddListener(OnOneShotMotionEnded);
+            }
         }
 
         private void UnregisterCallbacks()
@@ -190,6 +212,13 @@ namespace Firsthabit.WebGL
 
                 fluentTAvatar.OnSubtitleTextStarted.RemoveListener(OnSubtitleStarted);
                 fluentTAvatar.OnSubtitleTextEnded.RemoveListener(OnSubtitleEnded);
+
+                var headController = GetHeadController();
+                if (headController != null)
+                {
+                    headController.onOneShotMotionStarted.RemoveListener(OnOneShotMotionStarted);
+                    headController.onOneShotMotionEnded.RemoveListener(OnOneShotMotionEnded);
+                }
             }
             catch (Exception e)
             {
@@ -738,9 +767,126 @@ namespace Firsthabit.WebGL
             }
         }
 
+        /// <summary>
+        /// Play a one-shot motion or motion group.
+        /// JSON: { "groupId": "listening" } for group loop, or { "motionId": "wave" } for single play.
+        /// Groups are checked first; if no groupId, falls back to motionId.
+        /// </summary>
+        public void PlayOneShotMotion(string json)
+        {
+            try
+            {
+                var request = JsonUtility.FromJson<OneShotMotionRequest>(json);
+                var headController = GetHeadController();
+                if (headController == null)
+                {
+                    FH_OnError("PlayOneShotMotion", "HeadController not found");
+                    return;
+                }
+
+                // Prefer groupId (loops random weighted clips)
+                if (!string.IsNullOrEmpty(request.groupId))
+                {
+                    bool success = headController.PlayOneShotMotionGroup(request.groupId);
+                    if (!success)
+                    {
+                        FH_OnError("PlayOneShotMotion", $"Group '{request.groupId}' not found or TalkMotion active");
+                    }
+                    else
+                    {
+                        Log($"PlayOneShotMotion: group '{request.groupId}' started");
+                    }
+                    return;
+                }
+
+                // Fall back to single motion
+                if (!string.IsNullOrEmpty(request.motionId))
+                {
+                    bool success = headController.PlayOneShotMotion(request.motionId);
+                    if (!success)
+                    {
+                        FH_OnError("PlayOneShotMotion", $"Motion '{request.motionId}' not found or TalkMotion active");
+                    }
+                    else
+                    {
+                        Log($"PlayOneShotMotion: '{request.motionId}' started");
+                    }
+                    return;
+                }
+
+                FH_OnError("PlayOneShotMotion", "No motionId or groupId provided");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("PlayOneShotMotion", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Stop the currently playing one-shot motion (single or group loop).
+        /// </summary>
+        public void StopOneShotMotion(string ignored)
+        {
+            try
+            {
+                var headController = GetHeadController();
+                if (headController == null)
+                {
+                    FH_OnError("StopOneShotMotion", "HeadController not found");
+                    return;
+                }
+
+                headController.StopOneShotMotion();
+                Log("StopOneShotMotion called");
+            }
+            catch (Exception e)
+            {
+                FH_OnError("StopOneShotMotion", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get available one-shot motion IDs and group IDs.
+        /// String param is ignored (required for SendMessage compatibility).
+        /// </summary>
+        public void GetOneShotMotionList(string ignored)
+        {
+            try
+            {
+                var headController = GetHeadController();
+                if (headController == null)
+                {
+                    FH_OnError("GetOneShotMotionList", "HeadController not found");
+                    return;
+                }
+
+                var response = new OneShotMotionListResponse
+                {
+                    motionIds = headController.GetOneShotMotionIds().ToArray(),
+                    groupIds = headController.GetOneShotMotionGroupIds().ToArray()
+                };
+                string responseJson = JsonUtility.ToJson(response);
+                Log($"OneShotMotionList: {responseJson}");
+                FH_OnOneShotMotionList(responseJson);
+            }
+            catch (Exception e)
+            {
+                FH_OnError("GetOneShotMotionList", e.Message);
+            }
+        }
+
         #endregion
 
         #region Helper Methods
+
+        private FluentTAvatarControllerFloatingHead GetHeadController()
+        {
+            if (currentAvatarInstance == null) return null;
+            var controller = currentAvatarInstance.GetComponent<FluentTAvatarControllerFloatingHead>();
+            if (controller == null)
+                controller = currentAvatarInstance.GetComponentInChildren<FluentTAvatarControllerFloatingHead>();
+            return controller;
+        }
 
         private AudioType GetAudioType(string format)
         {
@@ -869,6 +1015,18 @@ namespace Firsthabit.WebGL
             FH_OnSubtitleEnded(text);
         }
 
+        private void OnOneShotMotionStarted(string motionId)
+        {
+            Log($"OneShotMotion started: {motionId}");
+            FH_OnOneShotMotionStarted(motionId);
+        }
+
+        private void OnOneShotMotionEnded(string motionId)
+        {
+            Log($"OneShotMotion ended: {motionId}");
+            FH_OnOneShotMotionEnded(motionId);
+        }
+
         #endregion
 
         #region Logging
@@ -905,6 +1063,9 @@ namespace Firsthabit.WebGL
         [DllImport("__Internal")] private static extern void FH_OnCacheInfo(string json);
         [DllImport("__Internal")] private static extern void FH_OnAvatarChanged(string json);
         [DllImport("__Internal")] private static extern void FH_OnAvatarList(string json);
+        [DllImport("__Internal")] private static extern void FH_OnOneShotMotionStarted(string motionId);
+        [DllImport("__Internal")] private static extern void FH_OnOneShotMotionEnded(string motionId);
+        [DllImport("__Internal")] private static extern void FH_OnOneShotMotionList(string json);
         [DllImport("__Internal")] private static extern void FH_OnError(string method, string message);
         [DllImport("__Internal")] private static extern string FH_CreateAudioBlobUrl(string format);
         [DllImport("__Internal")] private static extern void FH_RevokeAudioBlobUrl(string url);
@@ -925,6 +1086,9 @@ namespace Firsthabit.WebGL
         private static void FH_OnCacheInfo(string json) => Debug.Log($"[FirsthabitBridge] OnCacheInfo: {json}");
         private static void FH_OnAvatarChanged(string json) => Debug.Log($"[FirsthabitBridge] OnAvatarChanged: {json}");
         private static void FH_OnAvatarList(string json) => Debug.Log($"[FirsthabitBridge] OnAvatarList: {json}");
+        private static void FH_OnOneShotMotionStarted(string motionId) => Debug.Log($"[FirsthabitBridge] OnOneShotMotionStarted: {motionId}");
+        private static void FH_OnOneShotMotionEnded(string motionId) => Debug.Log($"[FirsthabitBridge] OnOneShotMotionEnded: {motionId}");
+        private static void FH_OnOneShotMotionList(string json) => Debug.Log($"[FirsthabitBridge] OnOneShotMotionList: {json}");
         private static void FH_OnError(string method, string message) => Debug.LogError($"[FirsthabitBridge] Error in {method}: {message}");
         private static string FH_CreateAudioBlobUrl(string format) { Debug.Log("[FirsthabitBridge] CreateAudioBlobUrl (Editor)"); return ""; }
         private static void FH_RevokeAudioBlobUrl(string url) { }
