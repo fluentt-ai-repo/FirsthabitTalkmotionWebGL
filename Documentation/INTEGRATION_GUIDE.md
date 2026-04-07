@@ -102,7 +102,7 @@ flutter:
     - assets/talkmotion.html
 ```
 
-> **참고**: 로컬 에셋 방식은 앱 크기가 증가합니다 (약 30~50MB). 서버 호스팅을 권장합니다.
+> **참고**: 로컬 에셋 방식은 앱 크기가 증가합니다 (약 76MB, Wasm2023 + Code Stripping High 적용). 서버 호스팅을 권장합니다.
 
 ### 2.3 Flutter 패키지 설치
 
@@ -204,19 +204,31 @@ Unity WebGL을 로드하고 Flutter와 통신하는 HTML 파일이 필요합니�
       },
       onAvatarList: function(json) {
         window.flutter_inappwebview.callHandler('onAvatarList', json);
+      },
+      onOneShotMotionStarted: function(motionId) {
+        window.flutter_inappwebview.callHandler('onOneShotMotionStarted', motionId);
+      },
+      onOneShotMotionEnded: function(motionId) {
+        window.flutter_inappwebview.callHandler('onOneShotMotionEnded', motionId);
+      },
+      onOneShotMotionList: function(json) {
+        window.flutter_inappwebview.callHandler('onOneShotMotionList', json);
       }
     };
 
     // ============================================================
     // 2. Flutter → Unity 명령 전달 함수
+    //    Unity 인스턴스가 아직 준비되지 않은 경우 메시지를 큐에 저장하고,
+    //    인스턴스가 준비되면 큐에 쌓인 메시지를 순서대로 전달합니다.
     // ============================================================
     var unityInstance = null;
+    var pendingMessages = [];
 
     window.sendToUnity = function(method, param) {
       if (unityInstance) {
         unityInstance.SendMessage('FirsthabitWebGLBridge', method, param || '');
       } else {
-        console.warn('[TalkMotion] Unity instance not ready');
+        pendingMessages.push({method: method, param: param || ''});
       }
     };
 
@@ -245,7 +257,7 @@ Unity WebGL을 로드하고 Flutter와 통신하는 HTML 파일이 필요합니�
       streamingAssetsUrl: "StreamingAssets",
       companyName:   "FluentT",
       productName:   "FirsthabitTalkmotionWebGL",
-      productVersion: "0.2.0",        // 빌드 버전에 맞게 변경
+      productVersion: "0.6.1",        // 빌드 버전에 맞게 변경
       webglContextAttributes: {
         alpha: true,                   // 투명 배경 지원
         preserveDrawingBuffer: false,
@@ -253,7 +265,23 @@ Unity WebGL을 로드하고 Flutter와 통신하는 HTML 파일이 필요합니�
       },
     }).then(function(instance) {
       unityInstance = instance;
-      console.log('[TalkMotion] Unity instance ready');
+
+      // Unity 준비 전에 큐에 쌓인 메시지를 순서대로 전달
+      while (pendingMessages.length > 0) {
+        var msg = pendingMessages.shift();
+        unityInstance.SendMessage('FirsthabitWebGLBridge', msg.method, msg.param);
+      }
+
+      // Chrome AudioContext autoplay 정책 대응:
+      // 첫 사용자 제스처에서 AudioContext를 resume합니다.
+      document.addEventListener('pointerdown', function() {
+        try {
+          var ctx = instance.Module.audioContext || instance.Module.unityAudioContext;
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume();
+          }
+        } catch (e) {}
+      }, { once: true });
     }).catch(function(message) {
       console.error('[TalkMotion] Unity load failed:', message);
     });
@@ -430,7 +458,7 @@ void _registerHandlers(InAppWebViewController controller) {
     handlerName: 'onAvatarChanged',
     callback: (args) {
       final json = args[0] as String;
-      // {"avatarId": "avatar_01", "success": true, "error": ""}
+      // {"avatarId": "marie", "success": true, "error": ""}
     },
   );
 
@@ -438,7 +466,7 @@ void _registerHandlers(InAppWebViewController controller) {
     handlerName: 'onAvatarList',
     callback: (args) {
       final json = args[0] as String;
-      // {"avatarIds": ["avatar_01", ...], "currentAvatarId": "avatar_01"}
+      // {"avatarIds": ["marie", "ethan", ...], "currentAvatarId": "marie"}
     },
   );
 
@@ -455,6 +483,31 @@ void _registerHandlers(InAppWebViewController controller) {
     callback: (args) {
       final id = args[0] as String;
       // FluentT 서버에서 응답 수신됨
+    },
+  );
+
+  // One-Shot 모션 콜백
+  controller.addJavaScriptHandler(
+    handlerName: 'onOneShotMotionStarted',
+    callback: (args) {
+      final motionId = args[0] as String;
+      print('[TalkMotion] OneShot motion started: $motionId');
+    },
+  );
+
+  controller.addJavaScriptHandler(
+    handlerName: 'onOneShotMotionEnded',
+    callback: (args) {
+      final motionId = args[0] as String;
+      print('[TalkMotion] OneShot motion ended: $motionId');
+    },
+  );
+
+  controller.addJavaScriptHandler(
+    handlerName: 'onOneShotMotionList',
+    callback: (args) {
+      final json = args[0] as String;
+      // {"motionIds": ["wave", ...], "groupIds": ["listening", ...]}
     },
   );
 }
@@ -557,9 +610,12 @@ controller.addJavaScriptHandler(
 | `SetVolume` | `"0.0"` ~ `"1.0"` (문자열) | 음량 설정 | `onVolumeChanged` |
 | `GetCacheInfo` | *(무시됨)* | 현재 캐시 정보 조회 | `onCacheInfo` |
 | `ClearAllCache` | *(무시됨)* | 모든 캐시 초기화 | `onCacheInfo` |
-| `ChangeAvatar` | `"avatar_01"` 등 아바타 ID (문자열) | 아바타 런타임 교체 | `onAvatarChanged` |
+| `ChangeAvatar` | `"marie"` 등 아바타 ID (문자열) | 아바타 런타임 교체 | `onAvatarChanged` |
 | `GetAvatarList` | *(무시됨)* | 사용 가능한 아바타 목록 조회 | `onAvatarList` |
 | `SetBackgroundColor` | `"transparent"` 또는 `"#RRGGBB"` | 배경색 설정 | - |
+| `PlayOneShotMotion` | JSON: `{"groupId":"listening"}` 또는 `{"motionId":"wave"}` | One-Shot 모션 재생 (그룹 루프 또는 단일 재생) | `onOneShotMotionStarted` / `onOneShotMotionEnded` |
+| `StopOneShotMotion` | *(무시됨)* | 현재 One-Shot 모션 중지 | - |
+| `GetOneShotMotionList` | *(무시됨)* | 사용 가능한 One-Shot 모션/그룹 목록 조회 | `onOneShotMotionList` |
 
 #### PrepareAudio JSON 스키마
 
@@ -604,6 +660,22 @@ controller.addJavaScriptHandler(
 }
 ```
 
+#### PlayOneShotMotion JSON 스키마
+
+```json
+// 그룹 루프 (가중치 기반 랜덤 클립 반복 재생, StopOneShotMotion으로 중지)
+{
+  "groupId": "listening"   // One-Shot 모션 그룹 ID
+}
+
+// 단일 재생 (한 번 재생 후 idle로 복귀)
+{
+  "motionId": "wave"       // One-Shot 모션 ID
+}
+```
+
+> **groupId vs motionId**: groupId를 지정하면 해당 그룹 내의 클립이 가중치에 따라 랜덤으로 반복 재생됩니다. motionId를 지정하면 해당 클립이 한 번만 재생된 후 idle 상태로 돌아갑니다. groupId가 우선 적용되며, 둘 다 비어있으면 에러가 발생합니다.
+
 ### 4.2 Unity → Flutter 콜백
 
 Unity에서 발생하는 이벤트는 `window.FirsthabitBridge.onXxx()`를 통해 Flutter로 전달됩니다.
@@ -644,6 +716,14 @@ Unity에서 발생하는 이벤트는 `window.FirsthabitBridge.onXxx()`를 통�
 | `onAvatarList` | `json` (string) | 아바타 목록 JSON |
 | `onError` | `method` (string), `message` (string) | 에러 발생 |
 
+#### One-Shot 모션
+
+| 콜백 | 파라미터 | 설명 |
+|------|---------|------|
+| `onOneShotMotionStarted` | `motionId` (string) | One-Shot 모션 재생 시작됨 |
+| `onOneShotMotionEnded` | `motionId` (string) | One-Shot 모션 재생 종료됨 |
+| `onOneShotMotionList` | `json` (string) | 사용 가능한 One-Shot 모션/그룹 목록 JSON |
+
 #### 콜백 JSON 스키마
 
 **onCacheInfo:**
@@ -657,7 +737,7 @@ Unity에서 발생하는 이벤트는 `window.FirsthabitBridge.onXxx()`를 통�
 **onAvatarChanged:**
 ```json
 {
-  "avatarId": "avatar_01",
+  "avatarId": "marie",
   "success": true,
   "error": ""                // 실패 시 에러 메시지
 }
@@ -666,8 +746,16 @@ Unity에서 발생하는 이벤트는 `window.FirsthabitBridge.onXxx()`를 통�
 **onAvatarList:**
 ```json
 {
-  "avatarIds": ["avatar_01", "avatar_02", "avatar_03"],
-  "currentAvatarId": "avatar_01"
+  "avatarIds": ["marie", "ethan", "leo", "max", "sophia", "ella", "nora", "kai", "lina", "owen"],
+  "currentAvatarId": "marie"
+}
+```
+
+**onOneShotMotionList:**
+```json
+{
+  "motionIds": ["wave", "nod", "think_01"],
+  "groupIds": ["listening", "thinking"]
 }
 ```
 
@@ -805,7 +893,52 @@ await _sendToUnity('Speak', '{"text":"Hello, nice to meet you.","subtitleText":"
 await _sendToUnity('Speak', '{"text":"안녕하세요","prepareOnly":true}');
 ```
 
-### 5.4 API 비교: PrepareAudio vs Chat vs Speak
+### 5.4 One-Shot 모션 흐름
+
+One-Shot 모션은 TalkMotion 재생과 별개로, 특정 동작(듣기, 생각, 인사 등)을 독립적으로 트리거할 수 있는 기능입니다. TalkMotion 재생 중에는 One-Shot 모션이 무시됩니다.
+
+```
+Flutter App          HTML/JS              Unity (C#)
+    │                   │                     │
+    │ GetOneShotMotionList                    │
+    │ ─── evaluateJS ──>│ ── SendMessage ────>│
+    │                   │  <── onOneShotMotionList ──│
+    │  <── callHandler ──│                    │
+    │                   │                     │
+    │ PlayOneShotMotion │                     │
+    │ (groupId)         │                     │
+    │ ─── evaluateJS ──>│ ── SendMessage ────>│
+    │                   │  <── onOneShotMotionStarted ──│
+    │  <── callHandler ──│                    │
+    │                   │                     │ ── 모션 반복 재생
+    │                   │                     │
+    │ StopOneShotMotion │                     │
+    │ ─── evaluateJS ──>│ ── SendMessage ────>│
+    │                   │  <── onOneShotMotionEnded ──│
+    │  <── callHandler ──│                    │
+    │                   │                     │ ── idle 복귀
+```
+
+#### One-Shot 모션 사용 예시 (Dart)
+
+```dart
+// 사용 가능한 모션/그룹 목록 조회
+await _sendToUnity('GetOneShotMotionList', '');
+// onOneShotMotionList 콜백에서 motionIds, groupIds 수신
+
+// 그룹 루프 재생 (예: 듣기 모션)
+await _sendToUnity('PlayOneShotMotion', '{"groupId":"listening"}');
+// onOneShotMotionStarted 콜백 수신
+
+// 그룹 루프 중지
+await _sendToUnity('StopOneShotMotion', '');
+// onOneShotMotionEnded 콜백 수신
+
+// 단일 모션 재생 (한 번 재생 후 자동으로 idle 복귀)
+await _sendToUnity('PlayOneShotMotion', '{"motionId":"wave"}');
+```
+
+### 5.5 API 비교: PrepareAudio vs Chat vs Speak
 
 | 특성 | PrepareAudio | Chat | Speak |
 |------|-------------|------|-------|
@@ -816,7 +949,7 @@ await _sendToUnity('Speak', '{"text":"안녕하세요","prepareOnly":true}');
 | **자동 재생** | X (항상 prepare-only) | O (prepareOnly=false) | O (prepareOnly=false) |
 | **사용 사례** | 외부 TTS 오디오로 모션 생성 | 대화형 챗봇 | 안내 멘트, 내레이션 |
 
-### 5.5 에러 처리 패턴
+### 5.6 에러 처리 패턴
 
 ```dart
 // onPrepareFailed: 모션 준비 실패
@@ -1029,6 +1162,31 @@ class TalkmotionWebViewState extends State<TalkmotionWebView> {
     await _sendToUnity('Speak', json);
   }
 
+  /// One-Shot 모션 그룹을 루프 재생합니다.
+  /// 그룹 내 클립이 가중치에 따라 랜덤 반복 재생됩니다.
+  /// [groupId] - 모션 그룹 ID (예: "listening", "thinking")
+  Future<void> playOneShotMotionGroup(String groupId) async {
+    final json = '{"groupId":"${_escapeJson(groupId)}"}';
+    await _sendToUnity('PlayOneShotMotion', json);
+  }
+
+  /// 단일 One-Shot 모션을 재생합니다 (한 번 재생 후 idle 복귀).
+  /// [motionId] - 모션 ID (예: "wave")
+  Future<void> playOneShotMotion(String motionId) async {
+    final json = '{"motionId":"${_escapeJson(motionId)}"}';
+    await _sendToUnity('PlayOneShotMotion', json);
+  }
+
+  /// 현재 One-Shot 모션을 중지합니다.
+  Future<void> stopOneShotMotion() async {
+    await _sendToUnity('StopOneShotMotion');
+  }
+
+  /// 사용 가능한 One-Shot 모션/그룹 목록을 조회합니다.
+  Future<void> getOneShotMotionList() async {
+    await _sendToUnity('GetOneShotMotionList');
+  }
+
   // ─────────────────────────────────────────────
   // Internal
   // ─────────────────────────────────────────────
@@ -1128,6 +1286,21 @@ class TalkmotionWebViewState extends State<TalkmotionWebView> {
 
     controller.addJavaScriptHandler(
       handlerName: 'onAvatarList',
+      callback: (args) {},
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onOneShotMotionStarted',
+      callback: (args) {},
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onOneShotMotionEnded',
+      callback: (args) {},
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onOneShotMotionList',
       callback: (args) {},
     );
   }
@@ -1306,7 +1479,15 @@ InAppWebViewSettings(
 2. Unity 측에서 `SetBackgroundColor("transparent")` 호출
 3. HTML의 `webglContextAttributes`에 `alpha: true` 확인
 
-### 7.5 대용량 오디오 전달 시 문제
+### 7.5 Chrome AudioContext autoplay 경고
+
+**증상**: Chrome 콘솔에 `"The AudioContext was not allowed to start"` 경고가 표시되고, 첫 번째 오디오가 재생되지 않음
+
+**원인**: Chrome의 Autoplay Policy에 의해 사용자 제스처 없이는 AudioContext를 시작할 수 없습니다. Unity WebGL은 내부적으로 AudioContext를 사용합니다.
+
+**해결**: HTML wrapper의 Unity 인스턴스 생성 직후에 `pointerdown` 이벤트 리스너를 등록하여 첫 사용자 제스처에서 AudioContext를 resume합니다 (위 Step 1 템플릿에 이미 포함되어 있습니다). InAppWebView에서는 `mediaPlaybackRequiresUserGesture: false`를 설정하면 대부분 해결됩니다.
+
+### 7.6 대용량 오디오 전달 시 문제
 
 **증상**: 긴 오디오 파일 전달 시 WebView가 느려지거나 크래시
 
@@ -1333,9 +1514,24 @@ InAppWebViewSettings(
 
 사용 가능한 아바타 ID는 `GetAvatarList` 메서드로 조회할 수 있습니다. 응답 JSON에 `avatarIds` 배열과 `currentAvatarId`가 포함됩니다.
 
+현재 기본 제공 아바타 (v0.6.1):
+
+| 아바타 ID | 설명 |
+|-----------|------|
+| `marie` | 기본 아바타 |
+| `ethan` | - |
+| `leo` | - |
+| `max` | - |
+| `sophia` | - |
+| `ella` | - |
+| `nora` | - |
+| `kai` | - |
+| `lina` | - |
+| `owen` | - |
+
 ### 8.3 주요 제한사항
 
 - **WebGL 성능**: 네이티브 빌드 대비 성능이 제한적입니다 (15~30 FPS). 프로덕션 환경에서는 네이티브 Android/iOS 빌드를 권장합니다.
 - **메모리**: WebGL 빌드는 약 230~400MB 메모리를 사용합니다. 저사양 디바이스에서는 주의가 필요합니다.
 - **네트워크**: 모션 생성을 위해 FluentT 서버와의 통신이 필요합니다. 오프라인에서는 Prepare가 실패합니다.
-- **첫 로딩**: WASM 파일 다운로드 + 컴파일로 첫 로딩에 3~8초 소요됩니다. 로딩 인디케이터 표시를 권장합니다.
+- **빌드 용량**: WebGL 빌드 파일 총 약 76MB (Wasm2023 + Code Stripping High 적용). 첫 로딩 시 다운로드 + WASM 컴파일로 3~8초 소요됩니다. 로딩 인디케이터 표시를 권장합니다.
