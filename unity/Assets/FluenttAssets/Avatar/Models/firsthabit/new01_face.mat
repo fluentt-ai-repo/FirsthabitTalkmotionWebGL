@@ -15,6 +15,7 @@ Material:
   - _ENVIRONMENTREFLECTIONS_OFF
   - _NORMALINDEPTHNORMALPASS
   - _RECEIVEDECALS
+  - _RIMLIGHTING
   m_InvalidKeywords:
   - _VERTEXNORMAL_ON
   m_LightmapFlags: 4
@@ -140,11 +141,11 @@ Material:
     - _ReadMask: 255
     - _ReceiveDecals: 1
     - _ReceiveShadows: 1
-    - _Rim: 0
+    - _Rim: 1
     - _RimFrequency: 0
     - _RimMinPower: 1
     - _RimPerPositionFrequency: 1
-    - _RimPower: 5
+    - _RimPower: 3
     - _SampleCurvature: 0
     - _ShadowStrength: 0.7
     - _SkinShadowBias: 1
@@ -172,7 +173,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DistanceFade: {r: 2500, g: 0.001, b: 0, a: 0}
     - _EmissionColor: {r: 0.141555, g: 0.141555, b: 0.141555, a: 1}
-    - _RimColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+    - _RimColor: {r: 0.14117648, g: 0.105882354, b: 0.08235294, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}

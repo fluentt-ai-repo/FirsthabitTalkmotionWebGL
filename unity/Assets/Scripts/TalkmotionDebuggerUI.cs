@@ -19,23 +19,7 @@ namespace Firsthabit.WebGL
         [Tooltip("Panel width in pixels")]
         [SerializeField] private float panelWidth = 220f;
 
-        [Tooltip("Enable keyboard shortcuts (A/D or Arrow keys for avatar, W/S for zoom)")]
-        [SerializeField] private bool enableKeyboardShortcuts = true;
-
-        [Header("Camera Settings")]
-        [Tooltip("Enable automatic camera tracking of selected avatar")]
-        [SerializeField] private bool enableCameraTracking = true;
-
-        [Tooltip("Camera offset from head bone")]
-        [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 0f, 0.6f);
-
-        [Tooltip("Camera zoom speed")]
-        [SerializeField] private float zoomSpeed = 0.05f;
-
-        [Tooltip("Camera follow smoothing")]
-        [SerializeField] private float cameraSmoothSpeed = 5f;
-
-        [Header("API Test Defaults")]
+[Header("API Test Defaults")]
         [SerializeField] private string speakText = "이것은 음성 합성 테스트입니다.";
 
         [Header("Log Settings")]
@@ -51,9 +35,6 @@ namespace Firsthabit.WebGL
         private int selectedAvatarIndex = 0;
         private FluentTAvatar selectedAvatar;
 
-        // Camera
-        private Camera mainCamera;
-        private float currentZoomOffset = 0f;
 
         // UI state
         private string inputText = "";
@@ -73,9 +54,23 @@ namespace Firsthabit.WebGL
         private GUIStyle panelStyle;
         private bool stylesInitialized;
 
+        // Editor accessors
+        public FluentTAvatar[] Avatars => avatars;
+        public int SelectedAvatarIndex => selectedAvatarIndex;
+        public FluentTAvatar SelectedAvatar => selectedAvatar;
+
+        public void EditorSelectAvatar(int index) => SelectAvatar(index);
+        public void EditorRefreshAvatarList()
+        {
+            RefreshAvatarList();
+            if (avatars != null && avatars.Length > 0) SelectAvatar(0);
+        }
+
         #endregion
 
         #region Lifecycle
+
+        private Camera mainCamera;
 
         private void Start()
         {
@@ -89,56 +84,7 @@ namespace Firsthabit.WebGL
             inputText = speakText;
         }
 
-        private void Update()
-        {
-            if (!enableKeyboardShortcuts) return;
-
-            // Toggle UI
-            if (Input.GetKeyDown(KeyCode.F1))
-            {
-                showUI = !showUI;
-            }
-
-            if (!showUI) return;
-
-            // Avatar navigation: A/D or Left/Right
-            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                SelectAvatar(selectedAvatarIndex - 1);
-            }
-            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                SelectAvatar(selectedAvatarIndex + 1);
-            }
-
-            // Zoom: W/S or Up/Down
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
-                currentZoomOffset -= zoomSpeed * Time.deltaTime;
-            }
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
-                currentZoomOffset += zoomSpeed * Time.deltaTime;
-            }
-        }
-
-        private void LateUpdate()
-        {
-            if (!enableCameraTracking || mainCamera == null || selectedAvatar == null) return;
-
-            var headBone = FindHeadBone(selectedAvatar.transform);
-            if (headBone == null) return;
-
-            var targetPos = headBone.position + headBone.forward * (cameraOffset.z + currentZoomOffset)
-                                               + headBone.up * cameraOffset.y
-                                               + headBone.right * cameraOffset.x;
-
-            mainCamera.transform.position = Vector3.Lerp(
-                mainCamera.transform.position, targetPos, cameraSmoothSpeed * Time.deltaTime);
-            mainCamera.transform.LookAt(headBone.position);
-        }
-
-        private void OnDestroy()
+private void OnDestroy()
         {
             UnregisterCallbacks();
         }
@@ -182,30 +128,18 @@ namespace Firsthabit.WebGL
             selectedAvatarIndex = index;
             selectedAvatar = avatars[selectedAvatarIndex];
 
+            // Move camera X to avatar root position
+            if (mainCamera != null)
+            {
+                var camPos = mainCamera.transform.position;
+                mainCamera.transform.position = new Vector3(
+                    selectedAvatar.transform.position.x, camPos.y, camPos.z);
+            }
+
             // Re-register callbacks
             RegisterCallbacks(selectedAvatar);
 
             AddLog($"Selected: {selectedAvatar.gameObject.name}");
-        }
-
-        private Transform FindHeadBone(Transform root)
-        {
-            var animator = root.GetComponent<Animator>();
-            if (animator != null && animator.isHuman)
-            {
-                var head = animator.GetBoneTransform(HumanBodyBones.Head);
-                if (head != null) return head;
-            }
-
-            // Fallback: search by name
-            foreach (var t in root.GetComponentsInChildren<Transform>())
-            {
-                var name = t.name.ToLower();
-                if (name.Contains("head") && !name.Contains("headtop"))
-                    return t;
-            }
-
-            return root;
         }
 
         #endregion
@@ -356,7 +290,6 @@ namespace Firsthabit.WebGL
 
             // Title
             GUILayout.Label("TalkMotion Debugger", headerStyle);
-            GUILayout.Label("(F1 to toggle)", GUI.skin.label);
             GUILayout.Space(4);
 
             DrawAvatarSelector();
