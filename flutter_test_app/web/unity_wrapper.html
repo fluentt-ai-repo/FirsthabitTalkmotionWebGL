@@ -50,6 +50,19 @@
     }).then(function(instance) {
       window.unityInstance = instance;
       console.log('[Unity] unityInstance exposed on window');
+
+      // Resume AudioContext on first user gesture to suppress Chrome autoplay warning.
+      // The iframe canvas fills the page, so any click on the left panel triggers this.
+      document.addEventListener('pointerdown', function() {
+        try {
+          var ctx = instance.Module.audioContext || instance.Module.unityAudioContext;
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume().then(function() {
+              console.log('[Unity] AudioContext resumed');
+            });
+          }
+        } catch (e) {}
+      }, { once: true });
     }).catch(function(message) {
       alert(message);
     });
