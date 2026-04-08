@@ -861,7 +861,7 @@ MonoBehaviour:
     - line: '|   webEnableSubmoduleStrippingCompatibility: 0'
     - line: '|   scriptingDefineSymbols:'
     - line: '|     Standalone: MAGICACLOTH2'
-    - line: '|     WebGL: MAGICACLOTH2'
+    - line: '|     WebGL: '
     - line: '|   additionalCompilerArguments: {}'
     - line: '|   platformArchitecture: {}'
     - line: '|   scriptingBackend:'
