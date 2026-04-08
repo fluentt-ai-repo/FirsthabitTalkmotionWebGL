@@ -783,13 +783,14 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void PlayOneShotMotion(string json)
         {
+            if (!RequireAvatar("PlayOneShotMotion")) return;
             try
             {
                 var request = JsonUtility.FromJson<OneShotMotionRequest>(json);
                 var headController = GetHeadController();
                 if (headController == null)
                 {
-                    FH_OnError("PlayOneShotMotion", "HeadController not found");
+                    FH_OnError("PlayOneShotMotion", "AvatarController not found on current avatar");
                     return;
                 }
 
@@ -836,12 +837,13 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void StopOneShotMotion(string ignored)
         {
+            if (!RequireAvatar("StopOneShotMotion")) return;
             try
             {
                 var headController = GetHeadController();
                 if (headController == null)
                 {
-                    FH_OnError("StopOneShotMotion", "HeadController not found");
+                    FH_OnError("StopOneShotMotion", "AvatarController not found on current avatar");
                     return;
                 }
 
@@ -860,12 +862,13 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void GetOneShotMotionList(string ignored)
         {
+            if (!RequireAvatar("GetOneShotMotionList")) return;
             try
             {
                 var headController = GetHeadController();
                 if (headController == null)
                 {
-                    FH_OnError("GetOneShotMotionList", "HeadController not found");
+                    FH_OnError("GetOneShotMotionList", "AvatarController not found on current avatar");
                     return;
                 }
 
