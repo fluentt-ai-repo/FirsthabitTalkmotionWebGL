@@ -243,6 +243,8 @@ namespace Firsthabit.WebGL
 
         private IEnumerator PrepareAudioCoroutine(string json)
         {
+            if (!RequireAvatar("PrepareAudio")) yield break;
+
             PrepareRequest request;
             try
             {
@@ -335,6 +337,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void Play(string json)
         {
+            if (!RequireAvatar("Play")) return;
             try
             {
                 var request = JsonUtility.FromJson<PlayRequest>(json);
@@ -375,6 +378,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void Stop()
         {
+            if (!RequireAvatar("Stop")) return;
             try
             {
                 fluentTAvatar.StopTalkMotion();
@@ -393,6 +397,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void SetVolume(string volumeStr)
         {
+            if (!RequireAvatar("SetVolume")) return;
             try
             {
                 if (float.TryParse(volumeStr, System.Globalization.NumberStyles.Float,
@@ -418,6 +423,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void GetCacheInfo()
         {
+            if (!RequireAvatar("GetCacheInfo")) return;
             try
             {
                 var response = new CacheInfoResponse
@@ -440,6 +446,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void ClearAllCache()
         {
+            if (!RequireAvatar("ClearAllCache")) return;
             try
             {
                 fluentTAvatar.ClearCache(null);
@@ -650,6 +657,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void Chat(string json)
         {
+            if (!RequireAvatar("Chat")) return;
             try
             {
                 var request = JsonUtility.FromJson<ChatRequest>(json);
@@ -705,6 +713,7 @@ namespace Firsthabit.WebGL
         /// </summary>
         public void Speak(string json)
         {
+            if (!RequireAvatar("Speak")) return;
             try
             {
                 var request = JsonUtility.FromJson<SpeakRequest>(json);
@@ -878,6 +887,20 @@ namespace Firsthabit.WebGL
         #endregion
 
         #region Helper Methods
+
+        /// <summary>
+        /// Check if an avatar is loaded and ready for use.
+        /// Sends a clear error to Flutter if not.
+        /// </summary>
+        private bool RequireAvatar(string callerMethod)
+        {
+            if (fluentTAvatar == null)
+            {
+                FH_OnError(callerMethod, "No avatar loaded. Call ChangeAvatar first.");
+                return false;
+            }
+            return true;
+        }
 
         private FluentTAvatarControllerFloatingHead GetHeadController()
         {
