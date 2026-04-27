@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b384dfc041a8a4bbce402af6e1fc8f, type: 3}
   m_Name: TalkmotionServerSettings FaceHead
   m_EditorClassIdentifier: 
-  serverURL: https://api.talkmotion.ai
+  serverURL:
   requestTimeout: 30
   maxConcurrentRequests: 3
   useServerDefaultMotion: 0

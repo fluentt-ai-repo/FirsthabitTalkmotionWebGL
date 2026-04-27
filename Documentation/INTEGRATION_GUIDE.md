@@ -507,7 +507,7 @@ void _registerHandlers(InAppWebViewController controller) {
     handlerName: 'onOneShotMotionList',
     callback: (args) {
       final json = args[0] as String;
-      // {"motionIds": ["wave", ...], "groupIds": ["listening", ...]}
+      // {"motionIds": ["wave", ...], "groupIds": ["Listening", "Listening2", "Thinking", ...]}
     },
   );
 }
@@ -613,7 +613,7 @@ controller.addJavaScriptHandler(
 | `ChangeAvatar` | `"marie"` 등 아바타 ID (문자열) | 아바타 런타임 교체 | `onAvatarChanged` |
 | `GetAvatarList` | *(무시됨)* | 사용 가능한 아바타 목록 조회 | `onAvatarList` |
 | `SetBackgroundColor` | `"transparent"` 또는 `"#RRGGBB"` | 배경색 설정 | - |
-| `PlayOneShotMotion` | JSON: `{"groupId":"listening"}` 또는 `{"motionId":"wave"}` | One-Shot 모션 재생 (그룹 루프 또는 단일 재생) | `onOneShotMotionStarted` / `onOneShotMotionEnded` |
+| `PlayOneShotMotion` | JSON: `{"groupId":"Listening"}` 또는 `{"motionId":"wave"}` | One-Shot 모션 재생 (그룹 루프 또는 단일 재생) | `onOneShotMotionStarted` / `onOneShotMotionEnded` |
 | `StopOneShotMotion` | *(무시됨)* | 현재 One-Shot 모션 중지 | - |
 | `GetOneShotMotionList` | *(무시됨)* | 사용 가능한 One-Shot 모션/그룹 목록 조회 | `onOneShotMotionList` |
 
@@ -665,7 +665,7 @@ controller.addJavaScriptHandler(
 ```json
 // 그룹 루프 (가중치 기반 랜덤 클립 반복 재생, StopOneShotMotion으로 중지)
 {
-  "groupId": "listening"   // One-Shot 모션 그룹 ID
+  "groupId": "Listening"   // One-Shot 모션 그룹 ID (대소문자 구분)
 }
 
 // 단일 재생 (한 번 재생 후 idle로 복귀)
@@ -755,7 +755,7 @@ Unity에서 발생하는 이벤트는 `window.FirsthabitBridge.onXxx()`를 통�
 ```json
 {
   "motionIds": ["wave", "nod", "think_01"],
-  "groupIds": ["listening", "thinking"]
+  "groupIds": ["Listening", "Listening2", "Thinking"]
 }
 ```
 
@@ -927,7 +927,7 @@ await _sendToUnity('GetOneShotMotionList', '');
 // onOneShotMotionList 콜백에서 motionIds, groupIds 수신
 
 // 그룹 루프 재생 (예: 듣기 모션)
-await _sendToUnity('PlayOneShotMotion', '{"groupId":"listening"}');
+await _sendToUnity('PlayOneShotMotion', '{"groupId":"Listening"}');
 // onOneShotMotionStarted 콜백 수신
 
 // 그룹 루프 중지
@@ -1164,7 +1164,7 @@ class TalkmotionWebViewState extends State<TalkmotionWebView> {
 
   /// One-Shot 모션 그룹을 루프 재생합니다.
   /// 그룹 내 클립이 가중치에 따라 랜덤 반복 재생됩니다.
-  /// [groupId] - 모션 그룹 ID (예: "listening", "thinking")
+  /// [groupId] - 모션 그룹 ID (예: "Listening", "Listening2", "Thinking") — 대소문자 구분
   Future<void> playOneShotMotionGroup(String groupId) async {
     final json = '{"groupId":"${_escapeJson(groupId)}"}';
     await _sendToUnity('PlayOneShotMotion', json);

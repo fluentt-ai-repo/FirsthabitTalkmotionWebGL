@@ -1,11 +1,13 @@
 # Firebase Hosting 배포 가이드
 
+> ⚠️ **이관 안내 (2026-04-27)**: 본 가이드의 수행사 측 Firebase 프로젝트(`firsthabittalkmotionwebgl`, `https://firsthabittalkmotionwebgl.web.app`)는 **2026-04-27 자로 셧다운 처리**되었습니다. 본 문서의 명령·설정은 *절차 참고용*이며, 인수자는 자체 Firebase 프로젝트를 신규 개설하여 동등 절차로 배포하시면 됩니다. 인수자 자체 환경에서는 아래 모든 `firsthabittalkmotionwebgl` 식별자를 자체 프로젝트 ID로 치환하세요.
+
 ## 개요
 Flutter WebGL 테스트 앱을 Firebase Hosting으로 배포하여 외부 접속을 제공합니다.
 
-- **배포 URL**: https://firsthabittalkmotionwebgl.web.app
-- **Firebase 프로젝트 ID**: `firsthabittalkmotionwebgl`
-- **설정 파일 위치**: `flutter_test_app/firebase.json`, `flutter_test_app/.firebaserc`
+- ~~**배포 URL**: https://firsthabittalkmotionwebgl.web.app~~ (2026-04-27 셧다운)
+- ~~**Firebase 프로젝트 ID**: `firsthabittalkmotionwebgl`~~ (수행사 계정 셧다운 — 인수자 자체 프로젝트로 신설 필요)
+- **설정 파일 위치**: `flutter_test_app/firebase.json`, `flutter_test_app/.firebaserc` (인수자 환경에 맞춰 갱신)
 
 ## 사전 요구사항
 

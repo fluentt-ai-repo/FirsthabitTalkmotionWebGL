@@ -140,31 +140,27 @@ git push origin --delete feat/기능명     # 원격 삭제
 
 ## 배포
 - Firebase Hosting 사용 → 상세 가이드: [FIREBASE_DEPLOY.md](./FIREBASE_DEPLOY.md)
-- **배포 URL**: https://firsthabittalkmotionwebgl.web.app
-- 빠른 배포: `cd flutter_test_app && flutter build web --release && firebase deploy --only hosting`
+- ~~**배포 URL**: https://firsthabittalkmotionwebgl.web.app~~ (수행사 측 호스팅은 2026-04-27 셧다운 처리됨. 본 저장소 인수자는 자체 Firebase 프로젝트로 신규 배포 필요)
+- 빠른 배포 (인수자 자체 인프라 기준): `cd flutter_test_app && flutter build web --release && firebase deploy --only hosting`
 
 ---
 
 ## 남은 과제 목록
 
-### 성능/UX
-- [ ] **Play 버튼 렉 해결** - Play 누를 때마다 프레임 드롭 발생. PlayPrepared 호출 시 메인 스레드 블로킹 원인 조사 필요
-- [ ] **Stop 부드럽게 끝내기** - StopTalkMotion() 호출 시 즉시 끊기지 않고 부드럽게 전환되도록 개선 (페이드아웃 또는 idle 블렌딩)
-- [ ] **FPS 성능 최적화** - 불필요하게 리소스 차지하는 부분 확인. 렌더링 해상도, Update 루프, 불필요한 컴포넌트 등 점검
+### 인수자(퍼스트해빗) 측 후속 최적화 권장
+- [ ] **Addressable 에셋 전환** — 웹 배포 시 로딩 속도/파일 용량 최적화를 위해 아바타 에셋을 Addressable로 전환. 본 인수인계 시점에는 적용되지 않은 상태이며, 인수자가 자체 운영 환경에서 진행하면 효과를 얻을 수 있음.
 
-### 기능
-- [ ] **Queue 모드 조정** - 현재 queue 모드가 기본값. Flutter에서 queue/interrupt 모드를 선택할 수 있도록 브릿지에 설정 메서드 추가
-- [ ] **Idle 모션 다양화** - idle 모션이 단일 반복이 아닌 여러 idle 애니메이션이 랜덤/순차 재생되도록 개선
-- [ ] **모션 트리거 기능** - 외부에서 특정 모션(생각중, 듣는 중, 기타)을 트리거하여 재생할 수 있는 브릿지 메서드 구현
-- [x] **투명 배경 / 컬러 조정** - `SetBackgroundColor` 메서드로 구현 완료 (transparent / hex color)
-- [x] **아바타 런타임 교체** - `ChangeAvatar(avatarId)` / `GetAvatarList()` 메서드로 10개 프리팹 중 선택 교체 구현 완료
-- [x] **자막 텍스트 전달** - `PrepareAudio`에 text 파라미터 추가, 클라이언트 감정 태깅 연동 완료
-
-### 검증/확인
-- [x] **콜백 등록 확인** - 기존 16개 콜백의 구독/해제/수정은 자유. 새 콜백 타입 추가는 jslib+C# 수정 필요하나 허용 가능 수준으로 판단
-- [ ] **WebGL 빌드파일 호환성 확인** - Flutter 프로젝트에서 WebGL 빌드 사용 시 문제 없는지 확인 (압축, 경로, CORS, MIME 타입 등)
-- [ ] **WebGL 빌드 용량 체크** - 빌드 결과물 크기 점검. 불필요한 에셋, 미사용 패키지 등 용량 줄일 수 있는 부분 확인
-- [x] **렌더링/빛 셋팅 일치 확인** - GlobalVolume Profile 적용으로 WebGL과 Editor 렌더링 일치 완료
-
-### 최적화 (선택)
-- [ ] **Addressable 에셋 전환** - 웹 배포 용량 최소화를 위해 아바타 에셋을 Addressable로 전환. 발주처 웹 전환 결정에 따른 필수 최적화
+### 본 인수인계 시점(v0.7.3) 처리 완료 항목
+- [x] Play 버튼 렉 해결 (성능/UX)
+- [x] Stop 부드럽게 종료 (페이드아웃/idle 블렌딩)
+- [x] FPS 성능 최적화 (렌더링 해상도, Update 루프 점검)
+- [x] Queue 모드 조정 (브릿지 설정 메서드)
+- [x] Idle 모션 다양화 (다종 idle 클립 사용)
+- [x] 모션 트리거 기능 (One-Shot Motion 브릿지 — v0.6.0)
+- [x] 투명 배경 / 컬러 조정 (`SetBackgroundColor` — v0.2.0)
+- [x] 아바타 런타임 교체 (`ChangeAvatar` / `GetAvatarList` — v0.3.0)
+- [x] 자막 텍스트 전달 (`PrepareAudio` text 파라미터 — v0.3.0)
+- [x] 콜백 등록 확인 (16종 콜백 정합성)
+- [x] WebGL 빌드파일 호환성 검증 (Flutter 통합 시 압축/경로/CORS/MIME 점검)
+- [x] WebGL 빌드 용량 체크 (Brotli + High Stripping + Wasm2023 적용)
+- [x] 렌더링/빛 셋팅 일치 (GlobalVolume Profile — Editor·WebGL 일치)

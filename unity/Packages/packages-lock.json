@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.fluentt.avatar-controller-sample-floating-head": {
-      "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git",
+      "version": "https://github.com/fluentt-ai-repo/fluentt-avatar-controller-sample-floating-head.git#3e70755bf35102d37074aff20ed92ef34406077e",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -10,7 +10,7 @@
       "hash": "3e70755bf35102d37074aff20ed92ef34406077e"
     },
     "com.fluentt.talkmotion": {
-      "version": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git",
+      "version": "https://github.com/fluentt-ai-repo/talkmotion-sdk.git#537bcb180b73b6acc6c3a8b274b2d0b0364199ac",
       "depth": 0,
       "source": "git",
       "dependencies": {
